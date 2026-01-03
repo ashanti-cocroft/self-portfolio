@@ -707,8 +707,20 @@ completed_courses.add('Django')</pre>
       const mainDashboard = document.getElementById("main-dashboard");
       const detailPage = document.getElementById("detail-page");
       const backButton = document.getElementById("back-to-dashboard");
+      const loader = document.querySelector(".loader-wrapper");
 
-      // Skill data storage
+      // 1. LOADER INITIALIZATION
+      window.addEventListener("load", () => {
+        // Simulate loading time for the "Soul Bar" animation (3s)
+        setTimeout(() => {
+          loader.style.opacity = "0";
+          setTimeout(() => {
+            loader.style.display = "none";
+          }, 1000); // Wait for fade out to finish
+        }, 3000);
+      });
+
+      // 2. SKILL DATA STORAGE
       const skillData = {
         variables: {
           title: "Variables & Data Types",
@@ -721,86 +733,76 @@ completed_courses.add('Django')</pre>
             "Mutable vs immutable types affect how data is passed to functions",
             "Type conversion and casting for flexibility",
           ],
-          explanation:
-            "Think of variables as labeled boxes. Each box (variable) has a name on it and can hold different types of items (data). Understanding which data type to use is crucial for efficient programming.",
-          projects: [
-            {
-              title: "📊 Data Validator Script",
-              desc: "Built a script that validates user input, converts types, and stores data in appropriate collections.",
-            },
-            {
-              title: "🎯 Student Grade Manager",
-              desc: "Created a grade management system using dictionaries and lists to manage student records.",
-            },
-          ],
         },
         "control-flow": {
           title: "Control Flow",
           status: "complete",
           learned:
-            "Control flow determines the order in which code executes. I've mastered if/elif/else statements, comparison operators, logical operators, and how to build complex conditional logic.",
+            "Control flow determines the order in which code executes. I've mastered if/elif/else statements, comparison operators, and logical operators.",
           points: [
             "if/elif/else for decision making",
             "Comparison operators: ==, !=, <, >, <=, >=",
             "Logical operators: and, or, not",
             "Truthy and falsy values in Python",
           ],
-          explanation:
-            "Control flow is like a GPS giving directions - it tells your program which path to take based on conditions. If it's raining, bring an umbrella; else, wear sunglasses.",
-          projects: [
-            {
-              title: "🎮 Text Adventure Game",
-              desc: "Built a text-based game with branching storylines using nested if statements and complex conditionals.",
-            },
-          ],
         },
         loops: {
           title: "Loops & Iteration",
           status: "complete",
           learned:
-            "Loops allow you to execute code repeatedly. I've mastered for loops, while loops, break/continue statements, list comprehensions, and iterator functions.",
+            "Loops allow you to execute code repeatedly. I've mastered for loops, while loops, and list comprehensions.",
           points: [
             "for loops iterate over sequences",
             "while loops continue until a condition is false",
             "break exits the loop, continue skips to next iteration",
             "List comprehensions for elegant one-line loops",
           ],
-          explanation:
-            "Loops are like doing laps around a track - you keep going until you hit your goal. For loops are when you know how many laps; while loops continue until you're tired.",
-          projects: [
-            {
-              title: "📝 Todo List Manager",
-              desc: "Created a task manager that loops through tasks, marks them complete, and filters by status.",
-            },
-          ],
         },
-        functions: {
-          title: "Functions & Scope",
-          status: "in-progress",
-          learned:
-            "Functions are reusable blocks of code. Currently learning advanced concepts like *args, **kwargs, lambda functions, and closures.",
-          points: [
-            "Functions take input (parameters) and return output",
-            "Scope determines where variables can be accessed",
-            "Lambda functions for simple one-line functions",
-            "Decorators modify function behavior",
-          ],
-          explanation:
-            "Functions are like recipes - you give them ingredients (arguments), they follow steps (code), and return a dish (result). You can reuse the same recipe with different ingredients.",
-          projects: [
-            {
-              title: "🧮 Calculator Engine",
-              desc: "Developing a modular calculation engine using functional programming principles.",
-            },
-          ],
-        },
-        "error-handling": {
-          title: "Error Handling",
-          status: "in-progress",
-          learned:
-            "Robust code must anticipate failure. I am learning to use try",
-        },
+        // Add more skills here as needed
       };
+
+      // 3. NAVIGATION LOGIC
+      document.querySelectorAll(".skill-card").forEach((card) => {
+        card.addEventListener("click", (e) => {
+          // Don't open if card is locked
+          if (card.classList.contains("locked")) {
+            e.preventDefault();
+            return;
+          }
+
+          const skillKey = card.getAttribute("data-skill");
+          const data = skillData[skillKey];
+
+          if (data) {
+            e.preventDefault();
+
+            // Update Detail Page Content
+            document.getElementById("detail-title").textContent = data.title;
+            document.querySelector(".detail-content p").textContent =
+              data.learned;
+
+            const pointsList = document.querySelector(".key-points");
+            pointsList.innerHTML = ""; // Clear old points
+            data.points.forEach((point) => {
+              const li = document.createElement("li");
+              li.textContent = point;
+              pointsList.appendChild(li);
+            });
+
+            // Switch Views
+            mainDashboard.style.display = "none";
+            detailPage.classList.add("active");
+            window.scrollTo(0, 0);
+          }
+        });
+      });
+
+      // 4. BACK BUTTON LOGIC
+      backButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        detailPage.classList.remove("active");
+        mainDashboard.style.display = "block";
+      });
     </script>
   </body>
 </html>

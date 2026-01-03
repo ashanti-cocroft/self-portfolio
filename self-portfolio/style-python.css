@@ -503,3 +503,23 @@ body {
   margin-top: 15px;
   font-family: "Space Mono", monospace;
 }
+/* This makes the blue bar actually grow */
+@keyframes soulFill {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* This makes the reaper float up and down */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
