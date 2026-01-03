@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Ashanti Cocroft | System Hub</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Mono&family=Nosifer&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="loader-wrapper">
+      <div class="reaper-container">
+        <div class="reaper">💀</div>
+        <div class="soul-bar"><div class="fill"></div></div>
+        <p class="loading-text">INITIALIZING SYSTEM_VOICES...</p>
+      </div>
+    </div>
+
+    <main class="hell-scene">
+      <div class="hologram-wrapper">
+        <div class="main-title-container">
+          <div class="glitch-wrapper">
+            <h2 class="glitch" data-text="IT_INTERN_DEVELOPER">
+              IT_INTERN_DEVELOPER
+            </h2>
+          </div>
+          <h1 class="main-title">ASHANTI<br />COCROFT</h1>
+          <p class="hover-hint">PROBE THE VOID</p>
+        </div>
+
+        <nav class="holo-menu">
+          <div class="holo-outer-ring"></div>
+          <div class="holo-circle">
+            <div class="scanner-line"></div>
+            <div class="holo-glitch-overlay"></div>
+          </div>
+
+          <ul class="offering-list">
+            <li style="--i: 1">
+              <a href="python.html"><span>01</span> PYTHON CORE</a>
+            </li>
+            <li style="--i: 2">
+              <a href="#javascript"><span>02</span> JAVASCRIPT</a>
+            </li>
+            <li style="--i: 3">
+              <a href="#infrastructure"><span>03</span> INFRASTRUCTURE</a>
+            </li>
+            <li style="--i: 4">
+              <a href="#projects"><span>04</span> PROJECT VAULT</a>
+            </li>
+            <li style="--i: 5">
+              <a href="#html-css"><span>05</span> HTML & CSS</a>
+            </li>
+            <li style="--i: 6">
+              <a href="#django"><span>06</span> DJANGO</a>
+            </li>
+            <li style="--i: 7">
+              <a href="#website-maker"><span>07</span> Digital Designer</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="embers">
+        <div class="ember"></div>
+        <div class="ember"></div>
+        <div class="ember"></div>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const loader = document.querySelector(".loader-wrapper");
+        setTimeout(() => {
+          loader.style.opacity = "0";
+          setTimeout(() => {
+            loader.style.display = "none";
+          }, 1000);
+        }, 3500);
+      });
+    </script>
+  </body>
+</html>
