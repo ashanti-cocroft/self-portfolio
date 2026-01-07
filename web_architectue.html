@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Architecture | Ashanti Cocroft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --holo-blue: #00d9ff;
+        --ui-purple: #bc13fe;
+        --terminal-bg: #050505;
+      }
+      body {
+        background-color: var(--terminal-bg);
+        color: var(--ui-purple);
+        font-family: "JetBrains Mono", monospace;
+        margin: 0;
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+      }
+
+      /* --- SIDEBAR NAV --- */
+      .sidebar {
+        width: 300px;
+        border-right: 1px solid rgba(188, 19, 254, 0.3);
+        background: rgba(10, 0, 20, 0.95);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        flex-shrink: 0;
+        transition: transform 0.3s ease-in-out;
+        z-index: 100;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 260px;
+          transform: translateX(-100%);
+        }
+        .sidebar.active {
+          transform: translateX(0);
+        }
+        .mobile-toggle {
+          display: block !important;
+        }
+      }
+
+      .nav-item {
+        padding: 15px 20px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(188, 19, 254, 0.1);
+        transition: 0.3s;
+        color: rgba(188, 19, 254, 0.6);
+      }
+      .nav-item:hover,
+      .nav-item.active {
+        background: rgba(188, 19, 254, 0.1);
+        color: white;
+        border-left: 4px solid var(--ui-purple);
+      }
+
+      /* --- MAIN TERMINAL --- */
+      .main-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        background: #000;
+        min-width: 0;
+        overflow: hidden;
+      }
+      .terminal-header {
+        padding: 15px 30px;
+        border-bottom: 1px solid rgba(188, 19, 254, 0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #080010;
+        flex-shrink: 0;
+      }
+
+      #terminal-body {
+        padding: 30px;
+        overflow-y: auto;
+        flex-grow: 1;
+        display: block;
+        scroll-behavior: smooth;
+      }
+
+      .code-block {
+        background: rgba(0, 0, 0, 0.9);
+        padding: 20px;
+        border: 1px solid rgba(188, 19, 254, 0.3);
+        margin-bottom: 30px;
+        width: 100%;
+        position: relative;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 12px;
+        color: #d1d5db;
+        margin: 0;
+      }
+
+      /* --- DICTIONARY GRID --- */
+      .dictionary-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 30px;
+        padding: 20px;
+        background: rgba(188, 19, 254, 0.05);
+        border: 1px solid rgba(188, 19, 254, 0.1);
+      }
+
+      @media (min-width: 1024px) {
+        .dictionary-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .dict-item {
+        border-left: 2px solid var(--ui-purple);
+        padding-left: 15px;
+      }
+
+      .btn-bridge {
+        font-family: "Orbitron", sans-serif;
+        border: 1px solid var(--ui-purple);
+        padding: 5px 15px;
+        font-size: 10px;
+        color: var(--ui-purple);
+        text-decoration: none;
+      }
+      .btn-bridge:hover {
+        background: var(--ui-purple);
+        color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar orbitron" id="sidebar">
+      <div
+        class="p-6 text-white border-b border-purple-900 mb-4 flex justify-between items-center"
+      >
+        <div>
+          <div class="text-[10px] text-purple-500 mb-1 tracking-tighter">
+            // UI_BLUEPRINT
+          </div>
+          <div class="text-lg font-black tracking-widest">FRONTEND_DB</div>
+        </div>
+        <button class="md:hidden text-xs" onclick="toggleMenu()">CLOSE</button>
+      </div>
+      <div class="nav-item active" onclick="loadTopic('html_structure')">
+        01. Semantic HTML
+      </div>
+      <div class="nav-item" onclick="loadTopic('css_foundations')">
+        02. Box Model & CSS
+      </div>
+      <div class="nav-item" onclick="loadTopic('flexbox_grid')">
+        03. Flex & Grid
+      </div>
+      <div class="nav-item" onclick="loadTopic('tailwind_core')">
+        04. Tailwind Core
+      </div>
+      <div class="nav-item" onclick="loadTopic('responsive_design')">
+        05. Mobile First
+      </div>
+      <div class="nav-item" onclick="loadTopic('animations')">
+        06. Kinetic Motion
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="terminal-header">
+        <button
+          class="md:hidden border border-purple-500 px-2 py-1 text-[10px]"
+          onclick="toggleMenu()"
+        >
+          MENU
+        </button>
+        <span
+          class="text-[9px] md:text-xs orbitron opacity-50 tracking-[0.2em]"
+        >
+          INTERFACE_SYSTEMS // MODULE:
+          <span id="module-title">HTML_STRUCTURE</span>
+        </span>
+        <a href="index.html" class="btn-bridge">BRIDGE</a>
+      </div>
+      <div id="terminal-body">
+        <div id="content-area"></div>
+      </div>
+    </div>
+
+    <script>
+      function toggleMenu() {
+        document.getElementById("sidebar").classList.toggle("active");
+      }
+
+      const topics = {
+        html_structure: {
+          title: "01. Semantic HTML: The Structural Blueprint",
+          explain:
+            "HTML5 is the system's skeleton. A System Architect uses semantic landmarks and the 'class' attribute to create a structured, styleable, and accessible environment.",
+          dictionary: `
+  <div class="dictionary-grid">
+    <div class="col-span-full text-white underline orbitron mb-4 text-sm tracking-widest">SYSTEM ARCHITECT DICTIONARY</div>
+    
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">class="name"</p>
+      <p class="text-[10px] text-gray-400">The most important attribute for styling. It allows you to group elements under one name to apply CSS rules.</p>
+    </div>
+
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;!DOCTYPE html&gt;</p>
+      <p class="text-[10px] text-gray-400">The mandatory declaration that tells the browser the document is HTML5.</p>
+    </div>
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;html&gt;</p>
+      <p class="text-[10px] text-gray-400">The root element that wraps all other content on the web page.</p>
+    </div>
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;head&gt; &amp; &lt;meta&gt;</p>
+      <p class="text-[10px] text-gray-400">Head holds metadata; Meta tags configure settings like character set and mobile viewport.</p>
+    </div>
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;title&gt;</p>
+      <p class="text-[10px] text-gray-400">Sets the page name visible in the browser tab and search results.</p>
+    </div>
+
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;body&gt;</p>
+      <p class="text-[10px] text-gray-400">The container for all visible content—text, images, and links.</p>
+    </div>
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;header&gt; &amp; &lt;footer&gt;</p>
+      <p class="text-[10px] text-gray-400">Header holds intro/nav; Footer holds copyright and contact info at the base.</p>
+    </div>
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;nav&gt; &amp; &lt;main&gt;</p>
+      <p class="text-[10px] text-gray-400">Nav holds navigation links; Main identifies the unique primary content area.</p>
+    </div>
+
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;ul&gt; &amp; &lt;li&gt;</p>
+      <p class="text-[10px] text-gray-400">UL defines an unordered list; LI represents individual items within that list.</p>
+    </div>
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;h1&gt; to &lt;h6&gt;</p>
+      <p class="text-[10px] text-gray-400">Defines heading hierarchy. H1 is the primary title; H2-H6 are sub-levels.</p>
+    </div>
+
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;section&gt; &amp; &lt;article&gt;</p>
+      <p class="text-[10px] text-gray-400">Section groups related content; Article is for independent, self-contained stories.</p>
+    </div>
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;p&gt; &amp; &lt;div&gt;</p>
+      <p class="text-[10px] text-gray-400">P is for text paragraphs; Div is a generic container for layout and styling logic.</p>
+    </div>
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;figure&gt; &amp; &lt;img&gt;</p>
+      <p class="text-[10px] text-gray-400">Img embeds images; Figure encapsulates them with an optional caption.</p>
+    </div>
+    <div class="dict-item">
+      <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">&lt;aside&gt;</p>
+      <p class="text-[10px] text-gray-400">Used for sidebars or content indirectly related to the main text.</p>
+    </div>
+  </div>
+`,
+          code: `<!DOCTYPE html> <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hero Architecture</title>
+</head>
+<body class="bg-terminal">
+
+    <header class="main-header">
+        <nav class="navbar">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="#" class="nav-link">BRIDGE_LINK</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="content-wrapper">
+        <section class="hero-module">
+            <h1 class="glow-text">Primary Node (H1)</h1>
+            <h2 class="sub-text">Sub-Sector (H2)</h2>
+            
+            <div class="card-container">
+                <article class="data-post">
+                    <p class="description">Paragraph data describing system logic.</p>
+                    <figure class="media-frame">
+                        <img src="node.jpg" alt="Data Map" class="responsive-img">
+                        <figcaption class="label">Fig 1.1 - Semantic Map</figcaption>
+                    </figure>
+                </article>
+            </div>
+        </section>
+
+        <aside class="sidebar-alerts">
+            <p class="alert-text">System Sidebar: Related Node Alerts</p>
+        </aside>
+    </main>
+
+    <footer class="system-footer">
+        <p class="copyright">© 2026 ASHANTI_SYS | All Rights Reserved</p>
+    </footer>
+</body>
+</html>`,
+        },
+        css_foundations: {
+          title: "02. The CSS Box Model & Advanced Physics",
+          explain:
+            "Every element is a box. A System Architect must master the math of space (Content, Padding, Border, Margin) and the logic of 'box-sizing' to ensure layouts never break across devices.",
+
+          dictionary: `
+    <div class="dictionary-grid">
+      <div class="col-span-full text-white underline orbitron mb-4 text-sm tracking-widest">SYSTEM ARCHITECT DICTIONARY: CSS BOX MODEL</div>
+      
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">The 4 Layers</p>
+        <p class="text-[10px] text-gray-400">Content (inner core) → Padding (inside space) → Border (boundary) → Margin (outside space).</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">box-sizing: border-box</p>
+        <p class="text-[10px] text-gray-400">The pro standard. Forces width to include padding and borders so layouts don't break.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Margin Collapsing</p>
+        <p class="text-[10px] text-gray-400">Vertical margins between block elements often collapse into one, causing elements to 'stick' unexpectedly.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">min-height vs height</p>
+        <p class="text-[10px] text-gray-400">Fixed heights break layouts; min-height allows sections to grow with content safely.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Block vs Inline</p>
+        <p class="text-[10px] text-gray-400">Block takes full width; Inline ignores width/height. Inline-block allows both behaviors.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">overflow: hidden/auto</p>
+        <p class="text-[10px] text-gray-400">Controls if content is clipped or scrollable when it exceeds the box size.</p>
+      </div>
+    </div>
+  `,
+
+          code: `/* 1. GLOBAL BOX RESET */
+* {
+  box-sizing: border-box; /* Essential for predictable grids */
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. CORE BOX MODEL EXAMPLE */
+.card-node {
+  width: 300px;         /* Content width */
+  padding: 20px;        /* Adds space inside border */
+  border: 5px solid #000; /* Visible boundary */
+  margin: 10px auto;    /* 10px space outside; 'auto' centers it */
+}
+
+/* 3. DIMENSION & OVERFLOW LOGIC */
+.content-section {
+  min-height: 400px;    /* Grows with content; prevents cut-offs */
+  max-width: 1200px;    /* Prevents stretching on ultra-wide screens */
+  overflow: hidden;     /* Clips any bleeding content */
+}
+
+/* 4. BORDER & RADIUS POLISH */
+.button-action {
+  border-radius: 8px;   /* Rounded corners */
+  border-bottom: 4px solid rgba(0,0,0,0.3); /* Adds depth */
+  display: inline-block; /* Allows width/height on a link */
+}
+
+/* 5. ADVANCED REFINEMENT */
+.header-bg {
+  background-clip: padding-box; /* Keeps color inside the border */
+}`,
+        },
+        flexbox_grid: {
+          title: "03. Layout Engines: Flex vs. Grid Mastery",
+          explain:
+            "A Senior Architect chooses the right engine for the task. I utilize Flexbox for 1D component-level layouts (like dynamic navbars) and CSS Grid for 2D structural skeletons (like dashboard systems). This dual-approach ensures a responsive, pixel-perfect UI that scales across all device viewports.",
+
+          dictionary: `
+    <div class="dictionary-grid">
+      <div class="col-span-full text-white underline orbitron mb-4 text-sm tracking-widest">SYSTEM ARCHITECT DICTIONARY: LAYOUT ENGINES</div>
+      
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">justify-content</p>
+        <p class="text-[10px] text-gray-400">The Main-Axis alignment tool. Controls how space is distributed between items (e.g., center, space-between, space-around).</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">align-items</p>
+        <p class="text-[10px] text-gray-400">The Cross-Axis alignment tool. Perfect for centering items vertically within a container, ensuring visual balance.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">flex-grow / shrink</p>
+        <p class="text-[10px] text-gray-400">Determines how an element expands or contracts to fill the parent container's available space.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">grid-template-areas</p>
+        <p class="text-[10px] text-gray-400">A visual-first approach to grid layout, allowing the developer to name sections of the UI for cleaner, more readable CSS.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">place-items: center</p>
+        <p class="text-[10px] text-gray-400">A CSS Grid shorthand that centers items both horizontally and vertically simultaneously. High efficiency.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">gap (Column/Row)</p>
+        <p class="text-[10px] text-gray-400">Defines the gutter between grid/flex items without the side effects of traditional margins.</p>
+      </div>
+    </div>
+  `,
+
+          code: `/* --- THE ARCHITECT'S TOOLKIT --- */
+
+/* 1. FLEXBOX: DYNAMIC NAVBAR */
+.nav-container {
+  display: flex;
+  justify-content: space-between; /* Aligns brand left, links right */
+  align-items: center;            /* Vertical alignment */
+  flex-wrap: wrap;                /* Responsive safety */
+}
+
+/* 2. GRID: COMPLEX DASHBOARD */
+.main-dashboard-grid {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  grid-template-rows: auto 1fr;
+  gap: 24px;
+  grid-template-areas: 
+    "sidebar header header"
+    "sidebar content feed";
+}
+
+/* 3. CENTER COMMAND (Shorthand) */
+.modal-overlay {
+  display: grid;
+  place-items: center; /* Absolute 2D centering */
+  min-height: 100vh;
+}`,
+        },
+        tailwind_core: {
+          title: "04. Tailwind CSS: High-Velocity Utility Architecture",
+          explain:
+            "Tailwind isn't a new language—it's CSS written in 'shorthand acronyms.' Instead of jumping between an HTML file and a massive CSS file, I use utility classes to style elements instantly. This eliminates 'Naming Fatigue' (trying to name 100 different divs) and ensures that the final website only loads the CSS it actually uses, making it significantly faster than traditional methods.",
+
+          dictionary: `
+    <div class="dictionary-grid">
+      <div class="col-span-full text-white underline orbitron mb-4 text-sm tracking-widest">THE UTILITY-FIRST DICTIONARY</div>
+      
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">The 'Acronym' System</p>
+        <p class="text-[10px] text-gray-400">Tailwind uses shorthand for CSS properties. Example: 'flex' is 'display: flex', 'pt-4' is 'padding-top: 1rem', and 'text-center' is 'text-align: center'. It's the same CSS you know, just faster to type.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Eliminating Naming Fatigue</p>
+        <p class="text-[10px] text-gray-400">In traditional CSS, you spend hours naming classes like 'sidebar-inner-container-v2'. With Tailwind, you style the element directly. No names required, no messy stylesheets.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Responsive Modifiers (Prefixes)</p>
+        <p class="text-[10px] text-gray-400">Tailwind makes mobile-first design easy with prefixes like 'md:' or 'lg:'. Writing 'md:flex' means the element only becomes a flexbox on medium screens and up. No more complex media queries.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Design System Constraints</p>
+        <p class="text-[10px] text-gray-400">Tailwind forces you to use a 'scale' (like 4px, 8px, 16px). This prevents 'pixel-pushing' where one margin is 13px and another is 15px. Everything stays perfectly consistent.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">JIT Engine (Just-In-Time)</p>
+        <p class="text-[10px] text-gray-400">Tailwind only generates the CSS you actually type. If you never use 'bg-red-500', that code never enters your final website. This keeps your site lightning fast.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Hover & State Styles</p>
+        <p class="text-[10px] text-gray-400">Adding 'hover:bg-blue-500' handles the entire hover logic in one word. You can also style 'active:', 'focus:', and even 'dark:' modes just as easily.</p>
+      </div>
+    </div>
+  `,
+
+          code: `/* --- TRADITIONAL CSS vs TAILWIND --- */
+
+/* 1. THE OLD WAY (Traditional CSS) */
+.my-button {
+  display: flex;
+  padding: 1rem;
+  background-color: blue;
+  border-radius: 0.5rem;
+}
+.my-button:hover {
+  background-color: darkblue;
+}
+
+/* 2. THE TAILWIND WAY (The 'Acronym' Method) */
+<button class="flex p-4 bg-blue-500 rounded-lg hover:bg-blue-700">
+  Click Me
+</button>
+
+/* 3. IN-DEPTH COMPONENT EXAMPLE */
+<div class="max-w-sm mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+  <div class="md:flex">
+    <div class="md:shrink-0">
+       </div>
+    <div class="p-8">
+       <p class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
+         Case Study
+       </p>
+    </div>
+  </div>
+</div>`,
+        },
+        responsive_design: {
+          title: "05. Mobile First: The Responsive Masterplan",
+          explain:
+            "Mobile-first isn't just a design choice; it's a performance strategy. I build for the smallest screen first—the most constrained environment—and then use Tailwind's responsive prefixes to 'unlock' layout complexity as the screen grows. This approach ensures a lightweight, fluid experience that combines semantic structure with advanced layout logic.",
+
+          dictionary: `
+    <div class="dictionary-grid">
+      <div class="col-span-full text-white underline orbitron mb-4 text-sm tracking-widest">RESPONSIVE ENGINEERING DICTIONARY</div>
+      
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Breakpoint Logic (Prefixes)</p>
+        <p class="text-[10px] text-gray-400">In Tailwind, styles are mobile-first by default. Adding 'md:' or 'lg:' creates a 'Min-Width' media query. Example: 'block md:flex' means 'stay stacked on mobile, but turn into a row on tablets'.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Fluid vs. Adaptive</p>
+        <p class="text-[10px] text-gray-400">Fluid layouts use percentages (w-full); Adaptive layouts use fixed breakpoints (max-w-screen-xl). A pro uses both to ensure the UI never looks 'stretched'.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">The Meta Viewport</p>
+        <p class="text-[10px] text-gray-400">Connecting back to HTML basics: The 'viewport' meta tag is what tells the phone not to 'zoom out' the desktop site, but to render the mobile-optimized version instead.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Stack-to-Grid Transition</p>
+        <p class="text-[10px] text-gray-400">The most common responsive pattern. Elements sit in a single vertical column (stack) on mobile for readability, then move into a multi-column Grid on desktop.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Touch-Target Optimization</p>
+        <p class="text-[10px] text-gray-400">On mobile, we use larger padding (p-4 vs p-2) to ensure buttons are easy to tap with a thumb, even if the desktop version uses a smaller, mouse-friendly click area.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Hidden vs. Visible</p>
+        <p class="text-[10px] text-gray-400">Using 'hidden md:block' allows us to hide complex desktop sidebars on mobile and replace them with simple, mobile-friendly menus.</p>
+      </div>
+    </div>
+  `,
+
+          code: `<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    
+    <article class="flex flex-col md:flex-row overflow-hidden rounded-lg bg-gray-900">
+      
+      <div class="w-full md:w-48 h-48 md:h-auto relative">
+        <img src="thumb.jpg" class="absolute inset-0 w-full h-full object-cover">
+      </div>
+
+      <div class="p-6 flex flex-col justify-between">
+        <h3 class="text-xl font-bold text-white">Project Node_01</h3>
+        <p class="text-gray-400 text-sm mt-2">
+          This container uses Flexbox to align content vertically on mobile, 
+          switching to horizontal on desktop via 'md:flex-row'.
+        </p>
+        
+        <button class="mt-4 px-8 py-4 md:px-4 md:py-2 bg-purple-600 text-white rounded">
+          VIEW_DETAILS
+        </button>
+      </div>
+
+    </article>
+
+  </div>
+</section>`,
+        },
+        animations: {
+          title: "06. Kinetic Motion: Interaction & Visual Feedback",
+          explain:
+            "Motion is the final layer of the architecture. I use CSS transitions and transforms to provide instant feedback to user actions. By leveraging Tailwind's 'acronym' system for motion, I can trigger complex animations (like scaling, fading, and sliding) without writing heavy JavaScript, keeping the browser performance high and the UI feeling 'alive'.",
+
+          dictionary: `
+    <div class="dictionary-grid">
+      <div class="col-span-full text-white underline orbitron mb-4 text-sm tracking-widest">KINETIC ENGINEERING DICTIONARY</div>
+      
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Transition (duration/ease)</p>
+        <p class="text-[10px] text-gray-400">The 'Acronym' version: 'duration-300 ease-in-out'. This controls how long a change takes and the 'rhythm' of the movement so it feels natural, not robotic.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Transform (scale/rotate)</p>
+        <p class="text-[10px] text-gray-400">Modifies the shape or position of an element without breaking the layout around it. Examples: 'hover:scale-105' or 'hover:rotate-3'.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Keyframe Animations</p>
+        <p class="text-[10px] text-gray-400">A sequence of movements. Tailwind's 'animate-pulse' or 'animate-bounce' are shorthand for complex CSS keyframes that keep the user's attention on important items.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Hardware Acceleration</p>
+        <p class="text-[10px] text-gray-400">Using 'transform' properties is better for performance because the computer's GPU (Graphics card) handles the work, leaving the main processor free to load data.</p>
+      </div>
+
+      <div class="dict-item">
+        <p class="text-[10px] text-purple-300 font-bold mb-1 px-2 py-1 bg-purple-900/30 rounded border border-purple-500/30 inline-block">Reduced Motion (Accessibility)</p>
+        <p class="text-[10px] text-gray-400">A pro-level move. Using 'motion-reduce:hidden' ensures that users with motion sensitivity can still use your site comfortably without getting dizzy.</p>
+      </div>
+    </div>
+  `,
+
+          code: `/* 1. TAILWIND CONFIG: CUSTOM KEYFRAMES */
+module.exports = {
+  theme: {
+    extend: {
+      animation: {
+        'glitch': 'glitch 1s linear infinite',
+      },
+      keyframes: {
+        glitch: {
+          '0%, 100%': { transform: 'translate(0)' },
+          '33%': { transform: 'translate(-5px, 2px)' },
+          '66%': { transform: 'translate(5px, -2px)' },
+        }
+      }
+    }
+  }
+}
+
+/* 2. THE 'INTERACTIVE CARD' (Combines All Sections) */
+<div class="
+  /* BOX MODEL & FLEX */
+  p-6 flex flex-col items-center 
+  /* THE 'ACRONYMS' FOR MOTION */
+  transition-all duration-500 ease-out
+  /* TRANSFORMS */
+  hover:-translate-y-2 hover:shadow-2xl hover:border-purple-500
+  /* ANIMATION */
+  animate-fade-in-up
+">
+  <h3 class="text-white group-hover:text-purple-400">PROJECT_ALPHA</h3>
+  <p class="opacity-50 group-hover:opacity-100">Click to enter the node...</p>
+</div>`,
+        },
+      };
+
+      function loadTopic(id) {
+        const topic = topics[id];
+        if (!topic) return;
+        if (window.innerWidth <= 768)
+          document.getElementById("sidebar").classList.remove("active");
+
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((el) => el.classList.remove("active"));
+        document.getElementById("module-title").innerText = id.toUpperCase();
+
+        // --- THE ESCAPING FIX ---
+        // This ensures tags like <html> appear as text instead of being rendered
+        const escapedCode = topic.code
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
+        const container = document.getElementById("content-area");
+        container.innerHTML = `
+          <div class="mb-4 text-white orbitron tracking-widest text-xl underline decoration-purple-500 underline-offset-8">${
+            topic.title
+          }</div>
+          <div class="text-sm text-gray-400 mb-6 leading-relaxed italic border-l-2 border-purple-500 pl-4">// UI_SYSTEM_EXPLANATION: ${
+            topic.explain
+          }</div>
+          
+          <div class="code-block overflow-hidden">
+            <div class="absolute top-0 right-0 p-2 text-[8px] text-purple-900 orbitron">UI_V2.0</div>
+            <pre class="text-purple-300 font-mono">${escapedCode}</pre>
+          </div>
+          
+          ${topic.dictionary || ""}
+          
+          <div class="text-[10px] opacity-30 mt-10 orbitron">UI_NODE_SYNC_COMPLETE // SECTOR: ${id.toUpperCase()}</div>
+        `;
+        document.getElementById("terminal-body").scrollTop = 0;
+      }
+      window.onload = () => loadTopic("html_structure");
+    </script>
+  </body>
+</html>

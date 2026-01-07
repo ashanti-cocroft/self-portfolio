@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Logic Engine | Full Stack Roadmap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ui-green: #00ff88;
+        --terminal-bg: #050505;
+        --soft-green: rgba(0, 255, 136, 0.1);
+      }
+      body {
+        background: var(--terminal-bg);
+        color: #a1a1aa;
+        font-family: "JetBrains Mono", monospace;
+        margin: 0;
+        overflow: hidden;
+      }
+      .orbitron {
+        font-family: "Orbitron", sans-serif;
+      }
+
+      .system-header {
+        height: 60px;
+        border-bottom: 1px solid #1a1a1a;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        background: black;
+        z-index: 100;
+      }
+      .nav-btn {
+        border: 1px solid var(--ui-green);
+        color: var(--ui-green);
+        padding: 5px 15px;
+        font-size: 10px;
+        letter-spacing: 2px;
+        background: transparent;
+        cursor: pointer;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+      .nav-btn:hover {
+        background: var(--soft-green);
+        box-shadow: 0 0 10px var(--ui-green);
+      }
+
+      .main-container {
+        display: flex;
+        height: calc(100vh - 60px);
+      }
+
+      /* SIDEBAR WITH SCROLL */
+      aside {
+        width: 320px;
+        border-right: 1px solid #1a1a1a;
+        background: black;
+        flex-shrink: 0;
+        overflow-y: auto;
+      }
+      .nav-item {
+        cursor: pointer;
+        transition: 0.3s;
+        border-left: 2px solid transparent;
+        padding: 12px 20px;
+        font-size: 10px;
+        color: #444;
+      }
+      .nav-item:hover,
+      .nav-item.active {
+        background: var(--soft-green);
+        border-left: 2px solid var(--ui-green);
+        color: var(--ui-green);
+      }
+
+      main {
+        flex-grow: 1;
+        padding: 40px;
+        overflow-y: auto;
+      }
+      .code-block {
+        background: #0a0a0a;
+        border: 1px solid #1a1a1a;
+        padding: 24px;
+        border-radius: 4px;
+        position: relative;
+        margin-bottom: 2rem;
+      }
+      .dict-item {
+        background: #080808;
+        padding: 14px;
+        border: 1px solid #111;
+        border-radius: 4px;
+      }
+      .copy-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: var(--soft-green);
+        border: 1px solid var(--ui-green);
+        color: var(--ui-green);
+        font-size: 9px;
+        padding: 4px 8px;
+        cursor: pointer;
+      }
+
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #222;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--ui-green);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="system-header orbitron">
+      <div class="nav-btn">CORE_A_TO_Z</div>
+      <div class="text-[10px] text-gray-500 tracking-[0.4em]">
+        JS_DATABASE //
+        <span id="module-display" class="text-white">MODULE: INTRODUCTION</span>
+      </div>
+      <a href="index.html" class="nav-btn">RETURN_HOME</a>
+    </header>
+
+    <div class="main-container">
+      <aside>
+        <nav class="py-4">
+          <div
+            class="px-5 py-2 text-[9px] text-gray-600 orbitron tracking-widest uppercase"
+          >
+            Beginner Level
+          </div>
+          <div
+            class="nav-item active"
+            id="btn-intro"
+            onclick="loadTopic('intro')"
+          >
+            01. JS vs. Python: Syntax & Purpose
+          </div>
+          <div
+            class="nav-item"
+            id="btn-variables"
+            onclick="loadTopic('variables')"
+          >
+            02. VARIABLES & TYPES
+          </div>
+          <div
+            class="nav-item"
+            id="btn-operators"
+            onclick="loadTopic('operators')"
+          >
+            03. OPERATORS
+          </div>
+          <div class="nav-item" id="btn-flow" onclick="loadTopic('flow')">
+            04. CONDITIONAL FLOW
+          </div>
+          <div class="nav-item" id="btn-loops" onclick="loadTopic('loops')">
+            05. LOOPS & ITERATION
+          </div>
+          <div
+            class="nav-item"
+            id="btn-functions"
+            onclick="loadTopic('functions')"
+          >
+            06. FUNCTIONS
+          </div>
+
+          <div
+            class="px-5 py-2 mt-4 text-[9px] text-gray-600 orbitron tracking-widest uppercase"
+          >
+            Intermediate Level
+          </div>
+          <div class="nav-item" id="btn-strings" onclick="loadTopic('strings')">
+            07. STRING MANIPULATION
+          </div>
+          <div class="nav-item" id="btn-arrays" onclick="loadTopic('arrays')">
+            08. ARRAYS & METHODS
+          </div>
+          <div class="nav-item" id="btn-objects" onclick="loadTopic('objects')">
+            09. OBJECTS & JSON
+          </div>
+          <div class="nav-item" id="btn-dom" onclick="loadTopic('dom')">
+            10. DOM ARCHITECTURE
+          </div>
+
+          <div
+            class="px-5 py-2 mt-4 text-[9px] text-gray-600 orbitron tracking-widest uppercase"
+          >
+            Advanced Architecture
+          </div>
+          <div class="nav-item" id="btn-async" onclick="loadTopic('async')">
+            11. ASYNC & PROMISES
+          </div>
+          <div class="nav-item" id="btn-oops" onclick="loadTopic('oops')">
+            12. CLASSES & OOPS
+          </div>
+          <div class="nav-item" id="btn-http" onclick="loadTopic('http')">
+            13. HTTP & FETCH API
+          </div>
+        </nav>
+      </aside>
+
+      <main id="content-area"></main>
+    </div>
+
+    <script>
+      const topics = {
+        intro: {
+          title: "01. JS vs. Python: Syntax & Purpose",
+          explain:
+            "JavaScript is the language of the 'Frontend' (the parts users see), designed to be fast and interactive. Python is the language of 'Logic and Data,' designed to be clean and readable. While they look different, they both tell the computer how to solve problems.",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">JS: THE EVENT ENGINE</p>
+                <p class="text-[10px] text-gray-400">Built to handle 'Events' like clicks and scrolls. It uses curly braces {} to group code together.</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">PYTHON: THE READABLE ENGINE</p>
+                <p class="text-[10px] text-gray-400">Built for simplicity. It uses 'Whitespace' (indentation) instead of braces to organize code.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">HOW THEY DIFFER (FOR BEGINNERS)</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                <b class="text-white">JavaScript</b> is like a high-speed remote control for your website. It needs specific symbols like semicolons (;) and braces {} to know when a command ends. 
+                <br><br>
+                <b class="text-[#3776ab]">Python</b> is like reading a recipe book. It is much stricter about how you space your lines, but it uses fewer symbols, making it look more like plain English.
+            </p>
+        </div>
+    `,
+          code_js: `// JAVASCRIPT: Uses Braces and Semicolons
+function welcomeUser() {
+    console.log("Welcome to the JS Interface");
+}
+
+welcomeUser();`,
+          code_py: `# PYTHON: Uses Indentation and Colons
+def welcome_user():
+    print("Welcome to the Python Logic")
+
+welcome_user()`,
+        },
+        variables: {
+          title: "02. Variables: Containers & Scoping",
+          explain:
+            "Variables are like boxes that hold information. In JavaScript, we have different types of boxes depending on if the data stays the same (const) or changes (let). We also care about 'Scope'—which is the boundary where a variable is allowed to exist.",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">CONST vs LET</p>
+                <p class="text-[10px] text-gray-400">'const' is for values that never change (like a birthday). 'let' is for values that do change (like a game score).</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">DYNAMIC TYPING</p>
+                <p class="text-[10px] text-gray-400">Both JS and Python allow a variable to change from a number to a string easily. This is called 'Dynamic Typing'.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">WHY SCOPE MATTERS</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                In <b class="text-white">JavaScript</b>, using 'let' inside a loop or an 'if' block keeps that variable trapped inside those curly braces {}. This is good because it prevents variables from crashing into each other.
+                <br><br>
+                In <b class="text-[#3776ab]">Python</b>, variables created inside 'if' statements or loops usually "leak" out and can be used anywhere in the function. Python focuses on simplicity, while modern JS focuses on strict boundaries.
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Modern Scoping
+const userName = "Ashanti"; // Locked
+let userScore = 10;        // Can change
+
+if (true) {
+    let secret = "Only visible here";
+    console.log(secret); 
+}
+// console.log(secret); // This would cause an ERROR`,
+          code_py: `# PYTHON: Simple Assignment
+user_name = "Ashanti" # Locked by convention
+user_score = 10       # Can change
+
+if True:
+    secret = "Visible everywhere!"
+
+print(secret) # This works in Python!`,
+        },
+        operators: {
+          title: "03. Operators: Math & Logic",
+          explain:
+            "Operators are the tools we use to calculate and compare data. JavaScript is 'Flexible' and will try to combine different types (like text and numbers), while Python is 'Strict' and requires you to be very specific about what you are adding together.",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">STRICT EQUALITY (===)</p>
+                <p class="text-[10px] text-gray-400">In JS, '===' checks if the value AND the type are the same. This prevents accidental math errors.</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">LOGICAL KEYWORDS</p>
+                <p class="text-[10px] text-gray-400">JS uses symbols (&&, ||) for logic. Python uses plain English words (and, or), making it very readable.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">TYPE COERCION vs. STRICT MATH</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                <b class="text-white">JavaScript</b> will let you add a Number to a String (e.g., 5 + "5" = "55"). It "coerces" the number into text so the program doesn't crash.
+                <br><br>
+                <b class="text-[#3776ab]">Python</b> will stop you and throw an error. It believes it is better to crash the program than to give you a "weird" result like "55". This is why Python is favored for high-accuracy fields like Finance and Science.
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Loose vs Strict
+console.log(5 == "5");  // true (Values match)
+console.log(5 === "5"); // false (Types don't match)
+
+// Type Coercion
+let result = 10 + "5"; 
+console.log(result); // "105" (It turned into text!)`,
+          code_py: `# PYTHON: Strict by default
+print(5 == "5") # False (Types must match)
+
+# print(10 + "5") 
+# This would cause a TYPE ERROR in Python.
+# You must convert it manually:
+result = 10 + int("5") # 15`,
+        },
+        flow: {
+          title: "04. Conditional Flow: Logic Branching",
+          explain:
+            "Conditional flow allows the program to choose different paths based on data. We use 'If-Else' for ranges (like checking a high score) and 'Switch' for matching specific values (like a menu selection).",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">SWITCH / CASE</p>
+                <p class="text-[10px] text-gray-400">A JS-specific way to check one variable against many values. It is cleaner than using ten 'if' statements.</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">ELIF vs ELSE IF</p>
+                <p class="text-[10px] text-gray-400">Python uses the shortcut 'elif'. JavaScript uses the full 'else if'. Both do the exact same thing.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">WHICH ONE TO USE?</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                Use <b class="text-white">If-Else</b> when you are checking ranges (e.g., "Is the age between 18 and 21?"). 
+                <br><br>
+                Use <b class="text-white">Switch</b> when you have one variable that could be many different things (e.g., "Is the color Red, Blue, or Green?"). 
+                <br><br>
+                <b class="text-[#3776ab]">Python Note:</b> Python didn't have a 'Switch' statement for a long time (it recently added 'Match'), so Python developers traditionally use 'If-Elif-Else' for everything.
+            </p>
+        </div>
+    `,
+          code_js: `// JS: If-Else & Switch
+let day = "Monday";
+
+if (day === "Saturday") {
+    console.log("Weekend!");
+} else if (day === "Monday") {
+    console.log("Back to work.");
+}
+
+switch(day) {
+    case "Monday":
+        console.log("System Mode: High");
+        break; // Stops it from checking other cases
+    default:
+        console.log("System Mode: Normal");
+}`,
+          code_py: `# PYTHON: If-Elif-Else
+day = "Monday"
+
+if day == "Saturday":
+    print("Weekend!")
+elif day == "Monday":
+    print("Back to work.")
+else:
+    print("Normal day.")
+
+# Python traditionally uses If/Elif 
+# instead of Switch statements.`,
+        },
+        loops: {
+          title: "05. Loops: Automating Repetitive Tasks",
+          explain:
+            "Loops allow us to run the same code multiple times without writing it over and over. We use 'For' loops when we know exactly how many times to repeat, and 'While' loops when we want to keep going until something changes (like a player losing all their health).",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">CONTINUE vs BREAK</p>
+                <p class="text-[10px] text-gray-400">'Continue' skips the rest of the current turn and jumps to the next. 'Break' stops the whole loop immediately.</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">FOR...OF (JS) vs FOR...IN (PY)</p>
+                <p class="text-[10px] text-gray-400">These are the 'simplified' loops used to go through every item in a list or array without using numbers to track position.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">MANUAL vs. AUTOMATED</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                <b class="text-white">JavaScript</b> often uses the 'classic' for loop: <i>(let i=0; i < 5; i++)</i>. This gives you total control: where to start (0), when to stop (<5), and how to count (i++). 
+                <br><br>
+                <b class="text-[#3776ab]">Python</b> simplifies this using the <i>range()</i> function. It handles the counting for you behind the scenes, which makes the code shorter but gives you slightly less "hands-on" control over the counter variable.
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Manual Control Loop
+for (let i = 0; i < 5; i++) {
+    if (i === 2) continue; // Skip number 2
+    if (i === 4) break;    // Stop at 4
+    console.log("Counting: " + i);
+}
+
+// While Loop
+let battery = 3;
+while (battery > 0) {
+    console.log("Running...");
+    battery--;
+}`,
+          code_py: `# PYTHON: Range-Based Loop
+for i in range(5):
+    if i == 2: continue # Skip 2
+    if i == 4: break    # Stop at 4
+    print("Counting:", i)
+
+# While Loop
+battery = 3
+while battery > 0:
+    print("Running...")
+    battery -= 1`,
+        },
+        functions: {
+          title: "06. Functions: Reusable Logic Blocks",
+          explain:
+            "Functions are like mini-machines. you give them 'Ingredients' (Parameters), they perform a specific 'Task' (Logic), and they give you back a 'Result' (Return). This prevents you from writing the same code twice.",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">ARROW FUNCTIONS (=>)</p>
+                <p class="text-[10px] text-gray-400">A modern, shorthand way to write functions in JS. They make the code much cleaner and easier to read.</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">PARAMETERS vs ARGUMENTS</p>
+                <p class="text-[10px] text-gray-400">Parameters are the 'Placeholders' in the function definition. Arguments are the 'Real Values' you pass in when you call it.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">MODERN SYNTAX vs. CLASSIC DEF</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                In <b class="text-white">JavaScript</b>, we use the Arrow Function <i>=></i> for most tasks. It’s concise and doesn't require the 'function' keyword. It’s perfect for the "Event Driven" nature of the web.
+                <br><br>
+                In <b class="text-[#3776ab]">Python</b>, we always start with the <i>def</i> keyword. Python is built on the philosophy that "Explicit is better than implicit," so the structure of a function is very traditional and clear.
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Modern Arrow Function
+const calculateTotal = (price, tax) => {
+    return price + tax;
+};
+
+// Calling the function
+const total = calculateTotal(100, 8);
+console.log("Total: $" + total);`,
+          code_py: `# PYTHON: Standard Def Function
+def calculate_total(price, tax):
+    return price + tax
+
+# Calling the function
+total = calculate_total(100, 8)
+print("Total: $", total)`,
+        },
+        strings: {
+          title: "07. String Manipulation & Formatting",
+          explain:
+            "Strings are how we handle text data. In modern development, we avoid messy 'plus signs' to combine text. Instead, we use 'Interpolation' to inject variables directly into our sentences, making the code much cleaner and easier to maintain.",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">TEMPLATE LITERALS</p>
+                <p class="text-[10px] text-gray-400">Using backticks (\`) and \${} to combine text and variables. This is the gold standard for modern JS.</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">IMMUTABILITY</p>
+                <p class="text-[10px] text-gray-400">In both JS and Python, strings cannot be changed once created. You can only create a 'new' version of that string.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">CLEANER CONCATENATION</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                <b class="text-white">JavaScript</b> uses backticks (\`) for Template Literals. This allows for multi-line strings and easy variable injection without breaking the chain of text. 
+                <br><br>
+                <b class="text-[#3776ab]">Python</b> uses f-strings (f"Hello {name}"). It is widely considered one of Python's best features because it is incredibly fast and readable. 
+                <br><br>
+                Both languages have similar methods like <i>.toUpperCase()</i> in JS and <i>.upper()</i> in Python to transform text instantly.
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Template Literals & Methods
+const user = "Ashanti";
+const level = 5;
+
+// Injecting variables with \${}
+const msg = \`Admin: \${user} is at Level \${level}\`;
+
+console.log(msg.toUpperCase()); // "ADMIN: ASHANTI IS AT LEVEL 5"
+console.log(msg.slice(0, 5));   // "Admin"`,
+          code_py: `# PYTHON: f-strings & Methods
+user = "Ashanti"
+level = 5
+
+# Injecting variables with f""
+msg = f"Admin: {user} is at Level {level}"
+
+print(msg.upper()) # "ADMIN: ASHANTI IS AT LEVEL 5"
+print(msg[0:5])    # "Admin" (Using Slicing)`,
+        },
+        arrays: {
+          title: "08. Arrays & List Transformation",
+          explain:
+            "Arrays (JS) and Lists (Python) are collections of data. Instead of using old-fashioned loops to change data, we use 'Modern Methods' that create a brand new, updated version of the list. This keeps our original data safe and prevents bugs.",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">.MAP() & .FILTER()</p>
+                <p class="text-[10px] text-gray-400">.map() changes every item in a list. .filter() removes items that don't fit your rules.</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">LIST COMPREHENSIONS</p>
+                <p class="text-[10px] text-gray-400">Python's unique way of doing 'map' and 'filter' in a single, readable line of code.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">IMMUTABLE DATA TRANSFORMATION</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                In <b class="text-white">JavaScript</b>, we chain methods together. We start with a list, <b>.filter</b> out what we don't want, and <b>.map</b> the rest into a new format. It’s like an assembly line.
+                <br><br>
+                In <b class="text-[#3776ab]">Python</b>, we use List Comprehensions. It’s a bit like writing a sentence backward: "Give me X for every Y in this list if Z is true." It is extremely fast and is the "Pythonic" way to handle data.
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Chaining Modern Methods
+const prices = [10, 20, 30, 40, 50];
+
+// 1. Filter out high prices
+// 2. Apply a 10% discount to the rest
+const saleItems = prices
+    .filter(p => p < 40)
+    .map(p => p * 0.9);
+
+console.log(saleItems); // [9, 18, 27]`,
+          code_py: `# PYTHON: List Comprehensions
+prices = [10, 20, 30, 40, 50]
+
+# "Apply discount for p in prices if p is less than 40"
+sale_items = [p * 0.9 for p in prices if p < 40]
+
+print(sale_items) # [9.0, 18.0, 27.0]`,
+        },
+        objects: {
+          title: "09. Objects, Dictionaries & JSON",
+          explain:
+            "Objects are collections of 'Key-Value' pairs. Instead of using a number to find data (like in an array), we use a 'Key' (like a label). JSON is the universal language used to send these objects between a website and a database.",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">DESTRUCTURING (JS)</p>
+                <p class="text-[10px] text-gray-400">A shortcut to 'grab' a specific piece of data out of an object and turn it into its own variable instantly.</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">JSON SERIALIZATION</p>
+                <p class="text-[10px] text-gray-400">The process of turning an object into a 'String' (text) so it can travel across the internet to a server.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">OBJECTS vs. DICTIONARIES</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                In <b class="text-white">JavaScript</b>, Objects are the foundation of almost everything. You don't always need quotes around the 'Keys' (e.g., { name: "Dev" }), and you can access them using a dot (user.name).
+                <br><br>
+                In <b class="text-[#3776ab]">Python</b>, these are called 'Dictionaries'. Python is stricter: Keys MUST have quotes (e.g., {"name": "Dev"}), and you usually access them using brackets like user["name"]. 
+                <br><br>
+                <b>The Bridge:</b> JSON looks exactly like a Python Dictionary, which is why Python is so popular for backend data processing!
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Objects & Destructuring
+const user = { 
+    id: 1, 
+    name: "Ashanti",
+    role: "Developer"
+};
+
+// Destructuring: Grabbing name and role
+const { name, role } = user;
+console.log(\`User: \${name}, Role: \${role}\`);
+
+// Converting to JSON string for a server
+const jsonOutput = JSON.stringify(user);`,
+          code_py: `# PYTHON: Dictionaries
+user = { 
+    "id": 1, 
+    "name": "Ashanti",
+    "role": "Developer"
+}
+
+# Accessing data (Strict bracket style)
+name = user["name"]
+role = user["role"]
+print(f"User: {name}, Role: {role}")
+
+# Converting to JSON (Using 'json' library)
+import json
+json_output = json.dumps(user)`,
+        },
+        dom: {
+          title: "10. DOM Architecture: The Interactive Bridge",
+          explain:
+            "The DOM is a digital map of your webpage. When you use JavaScript to change a color or hide a menu, you aren't changing the HTML file—you are changing the 'Live Model' in the browser's memory. This allows for instant updates without refreshing the page.",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">QUERY SELECTOR</p>
+                <p class="text-[10px] text-gray-400">The 'hook' used to grab an HTML element by its ID or Class so you can manipulate it.</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">EVENT LISTENERS</p>
+                <p class="text-[10px] text-gray-400">The 'ears' of your code. They wait for a user to click, scroll, or type, and then trigger a function.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">THE JS ADVANTAGE: NO REFRESH</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                <b class="text-white">JavaScript</b> is unique because it lives inside the browser. It can talk to the <b>window</b> and <b>document</b> objects. This is why you can have "Dark Mode" buttons or live chat boxes.
+                <br><br>
+                <b class="text-[#3776ab]">Python</b> (unless using a web framework like Django or Flask) usually runs in a terminal or on a server. It doesn't have a "DOM" to touch. To make Python interactive on the web, it has to send instructions to JavaScript!
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Selecting and Modifying the UI
+const btn = document.querySelector('#action-btn');
+const title = document.querySelector('h1');
+
+// Adding an Event Listener
+btn.addEventListener('click', () => {
+    // Changing CSS and Text in real-time
+    title.innerText = "System Updated!";
+    title.style.color = "#00ff88";
+    
+    console.log("User clicked the button!");
+});`,
+          code_py: `# PYTHON: No Native DOM
+# Python cannot natively "grab" an HTML button 
+# in your browser like JS can.
+
+# Instead, Python processes the DATA:
+def process_click(user_action):
+    if user_action == "CLICK":
+        return "New Title Data"
+
+# It then sends this data back to the
+# browser where JS applies it to the DOM.`,
+        },
+        async: {
+          title: "11. Async & Promises: The Non-Blocking Engine",
+          explain:
+            "In a 'Synchronous' world, the whole website freezes while waiting for a photo to load. In an 'Asynchronous' world, JavaScript says: 'I'll go get that photo, you keep letting the user scroll, and I'll tell you when I'm back.' This is handled using Promises and the Async/Await keywords.",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">PROMISE</p>
+                <p class="text-[10px] text-gray-400">A placeholder for a value that hasn't arrived yet. It can be 'Pending' (waiting), 'Fulfilled' (success), or 'Rejected' (error).</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">AWAIT</p>
+                <p class="text-[10px] text-gray-400">The command that tells the code to pause and wait for the 'Promise' to finish before moving to the next line.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">EVENT LOOP vs. SEQUENTIAL EXECUTION</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                <b class="text-white">JavaScript</b> was born for this. It uses an 'Event Loop' to juggle many tasks at once on a single thread. It is like a waiter who takes your order, goes to the next table, and only comes back to you when the food is ready.
+                <br><br>
+                <b class="text-[#3776ab]">Python</b> is traditionally 'Synchronous' (one thing at a time). To do what JS does, Python needs special libraries like <i>asyncio</i>. While JS does this automatically, Python makes you opt-in to this behavior.
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Modern Async/Await
+const fetchUserData = async () => {
+    try {
+        console.log("Fetching...");
+        const response = await fetch('https://api.example.com/user');
+        const data = await response.json();
+        console.log("Success:", data.name);
+    } catch (error) {
+        console.log("Error finding user!");
+    }
+};
+
+fetchUserData();
+console.log("I run BEFORE the data arrives!");`,
+          code_py: `# PYTHON: Using Asyncio
+import asyncio
+
+async def fetch_user_data():
+    print("Fetching...")
+    # Simulated API call
+    await asyncio.sleep(2) 
+    print("Success: Ashanti")
+
+# In Python, you must explicitly 'run' the loop
+# asyncio.run(fetch_user_data())
+print("I run after the loop setup!")`,
+        },
+        oops: {
+          title: "12. Classes & OOP: Building Blueprints",
+          explain:
+            "Object-Oriented Programming (OOP) allows us to create a 'Blueprint' (Class) and then stamp out many 'Copies' (Objects) from it. This is essential for large projects like a Barbershop booking system, where every 'Customer' has the same properties but different names.",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">CONSTRUCTOR / INIT</p>
+                <p class="text-[10px] text-gray-400">The special function that 'sets up' the object the moment it is created (like giving a new car its color).</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">INHERITANCE</p>
+                <p class="text-[10px] text-gray-400">Creating a 'Child' class that takes all the skills of the 'Parent' class so you don't have to type them again.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">PROTOTYPES vs. CLASSES</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                In <b class="text-white">JavaScript</b>, Classes are actually "Syntactic Sugar." Under the hood, JS uses something called 'Prototypes.' We use the <b>class</b> keyword because it is much easier for humans to read and organize.
+                <br><br>
+                In <b class="text-[#3776ab]">Python</b>, everything is an object from the start. Python uses the <i>self</i> keyword to refer to the specific copy of the class you are working on, whereas JS uses the keyword <i>this</i>. They do the exact same job!
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Class Blueprint
+class Player {
+    constructor(name) {
+        this.name = name;
+        this.health = 100;
+    }
+    
+    heal() { this.health += 10; }
+}
+
+// Inheritance: Admin gets everything Player has
+class Admin extends Player {
+    deleteUser() { console.log("User Deleted"); }
+}
+
+const user1 = new Admin("Ashanti");
+user1.heal(); // Inherited from Player!`,
+          code_py: `# PYTHON: Class Blueprint
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.health = 100
+    
+    def heal(self):
+        self.health += 10
+
+# Inheritance: Admin(Player)
+class Admin(Player):
+    def delete_user(self):
+        print("User Deleted")
+
+user1 = Admin("Ashanti")
+user1.heal() # Inherited from Player!`,
+        },
+        http: {
+          title: "13. HTTP & API Communication",
+          explain:
+            "HTTP is the 'Language of the Web.' When your app needs information from a server, it sends a Request. We use the Fetch API to perform 'CRUD' operations: Create (POST), Read (GET), Update (PUT), and Delete (DELETE).",
+          dictionary: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="dict-item">
+                <p class="text-[10px] text-[#00ff88] font-bold mb-1 orbitron">CRUD OPERATIONS</p>
+                <p class="text-[10px] text-gray-400">The four basic functions of persistent storage: Create, Read, Update, and Delete.</p>
+            </div>
+            <div class="dict-item">
+                <p class="text-[10px] text-[#3776ab] font-bold mb-1 orbitron">STATUS CODES</p>
+                <p class="text-[10px] text-gray-400">The server's way of talking back. 200 means 'Success', while 404 means 'Not Found'.</p>
+            </div>
+        </div>`,
+          deep_dive: `
+        <div class="mt-4 p-4 border border-gray-800 bg-[#080808] rounded">
+            <h4 class="text-[#00ff88] orbitron text-[10px] mb-2">CLIENT vs. SERVER COMMUNICATION</h4>
+            <p class="text-[11px] text-gray-400 leading-relaxed">
+                <b class="text-white">JavaScript (Fetch)</b> is built into the browser. It is 'Asynchronous', meaning the user can keep using the site while the data is loading in the background. It returns a 'Promise' that we must 'await'.
+                <br><br>
+                <b class="text-[#3776ab]">Python (Requests)</b> is a famous external library. It is usually 'Synchronous', meaning it stops the code until the data arrives. This makes Python excellent for automated 'Scraping' or backend data processing where waiting is okay.
+            </p>
+        </div>
+    `,
+          code_js: `// JS: Sending a Booking (POST)
+const sendBooking = async (details) => {
+    const response = await fetch('https://api.headzup.com/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(details)
+    });
+
+    if (response.ok) {
+        console.log("Appointment Saved!");
+    }
+};
+
+sendBooking({ service: "Fade", time: "2:00PM" });`,
+          code_py: `# PYTHON: Sending a Booking (POST)
+import requests
+
+details = { "service": "Fade", "time": "2:00PM" }
+
+# Python waits here until the server answers
+response = requests.post(
+    'https://api.headzup.com/book', 
+    json=details
+)
+
+if response.status_code == 200:
+    print("Appointment Saved!")`,
+        },
+      };
+
+      function loadTopic(id) {
+        const topic = topics[id];
+        if (!topic) return;
+
+        // Update Header
+        document.getElementById(
+          "module-display"
+        ).innerText = `MODULE: ${id.toUpperCase()}`;
+
+        // Update Sidebar Navigation
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((el) => el.classList.remove("active"));
+        const activeBtn = document.getElementById("btn-" + id);
+        if (activeBtn) activeBtn.classList.add("active");
+
+        const container = document.getElementById("content-area");
+        container.innerHTML = `
+        <div class="mb-5 text-white orbitron tracking-widest text-2xl underline decoration-[#00ff88] underline-offset-[12px]">
+            ${topic.title}
+        </div>
+        
+        <div class="text-sm text-gray-500 mb-8 italic border-l-2 border-[#00ff88] pl-6 leading-relaxed">
+            // CONCEPT: ${topic.explain}
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div>
+                <span class="text-[9px] text-[#00ff88] orbitron">JAVASCRIPT SOURCE</span>
+                <div class="code-block mt-2">
+                    <pre class="text-[#00ff88] text-xs font-mono">${
+                      topic.code_js
+                    }</pre>
+                </div>
+            </div>
+            <div>
+                <span class="text-[9px] text-[#3776ab] orbitron">PYTHON EQUIVALENT</span>
+                <div class="code-block border-[#3776ab] mt-2">
+                    <pre class="text-[#3776ab] text-xs font-mono">${
+                      topic.code_py
+                    }</pre>
+                </div>
+            </div>
+        </div>
+
+        ${topic.dictionary}
+
+        ${topic.deep_dive || ""}
+    `;
+      }
+
+      async function copyToClipboard(button) {
+        const code = document.getElementById("code-snippet").innerText;
+        await navigator.clipboard.writeText(code);
+        button.innerText = "COPIED!";
+        setTimeout(() => {
+          button.innerText = "COPY_CODE";
+        }, 2000);
+      }
+
+      window.onload = () => loadTopic("intro");
+    </script>
+  </body>
+</html>

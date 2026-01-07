@@ -1,808 +1,1017 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Ashanti Cocroft | Python Mastery Protocol</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="self-portfolio\style-python.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python Core Architecture | Ashanti Cocroft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --holo-blue: #00d9ff;
+        --terminal-bg: #0a0a0c;
+      }
+      body {
+        background-color: #050505;
+        color: var(--holo-blue);
+        font-family: "JetBrains Mono", monospace;
+        margin: 0;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* --- SIDEBAR NAV --- */
+      .sidebar {
+        width: 300px;
+        border-right: 1px solid rgba(0, 217, 255, 0.2);
+        background: rgba(0, 10, 20, 0.95);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        flex-shrink: 0;
+        transition: transform 0.3s ease-in-out;
+        z-index: 100;
+      }
+
+      /* --- MOBILE OVERRIDES --- */
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 260px;
+          transform: translateX(-100%); /* Hidden by default on mobile */
+        }
+        .sidebar.active {
+          transform: translateX(0); /* Show when active */
+        }
+        .main-content {
+          width: 100vw;
+        }
+        #terminal-body {
+          padding: 20px !important;
+        }
+        .mobile-toggle {
+          display: block !important;
+        }
+      }
+
+      .nav-item {
+        padding: 15px 20px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(0, 217, 255, 0.05);
+        transition: 0.3s;
+        color: rgba(0, 217, 255, 0.6);
+      }
+      .nav-item:hover,
+      .nav-item.active {
+        background: rgba(0, 217, 255, 0.1);
+        color: white;
+        border-left: 4px solid var(--holo-blue);
+      }
+
+      /* --- MAIN TERMINAL --- */
+      .main-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--terminal-bg);
+        overflow: hidden;
+      }
+      .terminal-header {
+        padding: 15px 30px;
+        border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #050505;
+      }
+
+      /* Mobile Toggle Button */
+      .mobile-toggle {
+        display: none;
+        background: transparent;
+        border: 1px solid var(--holo-blue);
+        color: var(--holo-blue);
+        padding: 5px 10px;
+        font-family: "Orbitron", sans-serif;
+        font-size: 10px;
+        cursor: pointer;
+      }
+
+      #terminal-body {
+        padding: 40px;
+        overflow-y: auto;
+        flex-grow: 1;
+        scroll-behavior: smooth;
+      }
+      .code-block {
+        background: rgba(0, 0, 0, 0.8);
+        padding: 20px;
+        border-radius: 5px;
+        border: 1px solid rgba(0, 217, 255, 0.2);
+        margin-bottom: 30px;
+      }
+
+      /* Code Wrapping for Mobile */
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 13px;
+      }
+
+      .btn-bridge {
+        font-family: "Orbitron", sans-serif;
+        border: 1px solid var(--holo-blue);
+        padding: 5px 15px;
+        font-size: 10px;
+        transition: 0.3s;
+        white-space: nowrap;
+      }
+      .btn-bridge:hover {
+        background: var(--holo-blue);
+        color: black;
+      }
+    </style>
   </head>
   <body>
-    <!-- MAIN DASHBOARD -->
-    <div id="main-dashboard" class="module-page">
-      <nav class="sub-nav">
-        <a href="index.html" class="back-link">← RETURN_TO_HUB</a>
-      </nav>
-
-      <div class="loader-wrapper">
-        <div class="reaper-container">
-          <div class="reaper">💀</div>
-          <div class="soul-bar"><div class="fill"></div></div>
-          <p class="loading-text">INITIALIZING PYTHON_PROTOCOL...</p>
+    <div class="sidebar orbitron" id="sidebar">
+      <div
+        class="p-6 text-white border-b border-cyan-900 mb-4 flex justify-between items-center"
+      >
+        <div>
+          <div class="text-[10px] text-cyan-500 mb-1 tracking-tighter">
+            // SYSTEM_ARCHIVE
+          </div>
+          <div class="text-lg font-black tracking-widest">PYTHON_DB</div>
         </div>
+        <button class="mobile-toggle md:hidden" onclick="toggleMenu()">
+          CLOSE
+        </button>
       </div>
-
-      <header class="mastery-header">
-        <h1>PYTHON_MASTERY_PROTOCOL</h1>
-        <p>FROM BEGINNER TO EXPERT DOMINANCE</p>
-
-        <div class="progress-bar-container">
-          <div class="progress-bar"></div>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number">32</div>
-            <div class="stat-label">SKILLS_ACQUIRED</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">15</div>
-            <div class="stat-label">IN_PROGRESS</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">24</div>
-            <div class="stat-label">TO_CONQUER</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">45%</div>
-            <div class="stat-label">COMPLETION</div>
-          </div>
-        </div>
-      </header>
-
-      <section class="skill-sections">
-        <!-- ==================== LEVEL 01: FUNDAMENTALS ==================== -->
-        <h2 class="section-title">[ LEVEL 01 ] CORE_FUNDAMENTALS</h2>
-        <div class="skill-grid">
-          <a href="#" class="skill-card complete" data-skill="variables">
-            <div class="skill-header">
-              <div class="skill-title">Variables & Data Types</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Mastered strings, integers, floats, booleans, lists, tuples, sets,
-              and dictionaries.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">str</span>
-              <span class="tag">int</span>
-              <span class="tag">dict</span>
-              <span class="tag">list</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card complete" data-skill="control-flow">
-            <div class="skill-header">
-              <div class="skill-title">Control Flow</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              if/elif/else statements, comparison operators, logical operators,
-              and nested conditions.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">if/else</span>
-              <span class="tag">logic</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card complete" data-skill="loops">
-            <div class="skill-header">
-              <div class="skill-title">Loops & Iteration</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              for loops, while loops, break/continue, list comprehensions, and
-              enumerate/zip functions.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">for</span>
-              <span class="tag">while</span>
-              <span class="tag">comprehensions</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card in-progress" data-skill="functions">
-            <div class="skill-header">
-              <div class="skill-title">Functions & Scope</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Defining functions, parameters, return values, *args/**kwargs,
-              lambda functions, closures.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">def</span>
-              <span class="tag">lambda</span>
-              <span class="tag">decorators</span>
-            </div>
-          </a>
-
-          <a
-            href="#"
-            class="skill-card in-progress"
-            data-skill="error-handling"
-          >
-            <div class="skill-header">
-              <div class="skill-title">Error Handling</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              try/except blocks, raising exceptions, custom exceptions, finally
-              clause, context managers.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">try/except</span>
-              <span class="tag">raise</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="file-io">
-            <div class="skill-header">
-              <div class="skill-title">File I/O Operations</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Reading/writing files, CSV handling, JSON parsing, file paths,
-              context managers (with).
-            </div>
-            <div class="skill-tags">
-              <span class="tag">open()</span>
-              <span class="tag">json</span>
-              <span class="tag">csv</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="modules">
-            <div class="skill-header">
-              <div class="skill-title">Modules & Imports</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Importing modules, creating modules, __name__ == "__main__", pip
-              package management.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">import</span>
-              <span class="tag">pip</span>
-              <span class="tag">packages</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="strings">
-            <div class="skill-header">
-              <div class="skill-title">String Manipulation</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              String methods, slicing, formatting (f-strings, .format()),
-              regular expressions basics.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">split()</span>
-              <span class="tag">join()</span>
-              <span class="tag">regex</span>
-            </div>
-          </a>
-        </div>
-
-        <!-- ==================== LEVEL 02: INTERMEDIATE ==================== -->
-        <h2 class="section-title">[ LEVEL 02 ] INTERMEDIATE_ARSENAL</h2>
-        <div class="skill-grid">
-          <a href="#" class="skill-card complete" data-skill="oop">
-            <div class="skill-header">
-              <div class="skill-title">Object-Oriented Programming</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Classes, objects, inheritance, encapsulation, polymorphism, magic
-              methods, properties.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">class</span>
-              <span class="tag">inheritance</span>
-              <span class="tag">__init__</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="decorators">
-            <div class="skill-header">
-              <div class="skill-title">Decorators & Closures</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Function decorators, class decorators, @staticmethod,
-              @classmethod, @property, functools.wraps.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">@decorator</span>
-              <span class="tag">wraps</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="iterators">
-            <div class="skill-header">
-              <div class="skill-title">Iterators & Generators</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              __iter__/__next__, yield keyword, generator expressions, itertools
-              module.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">yield</span>
-              <span class="tag">itertools</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="comprehensions">
-            <div class="skill-header">
-              <div class="skill-title">Advanced Comprehensions</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              List/dict/set comprehensions, nested comprehensions, conditional
-              expressions, walrus operator.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">[x for x]</span>
-              <span class="tag">:=</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="regex">
-            <div class="skill-header">
-              <div class="skill-title">Regular Expressions</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Pattern matching, re module, search/match/findall, groups,
-              substitution, flags.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">re.search()</span>
-              <span class="tag">pattern</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="functional">
-            <div class="skill-header">
-              <div class="skill-title">Functional Programming</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              map(), filter(), reduce(), lambda expressions, partial functions,
-              higher-order functions.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">map</span>
-              <span class="tag">filter</span>
-              <span class="tag">reduce</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="context-managers">
-            <div class="skill-header">
-              <div class="skill-title">Context Managers</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              with statements, __enter__/__exit__, contextlib module, creating
-              custom context managers.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">with</span>
-              <span class="tag">contextlib</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="collections">
-            <div class="skill-header">
-              <div class="skill-title">Collections Module</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              namedtuple, defaultdict, Counter, OrderedDict, deque, ChainMap
-              specialized data structures.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">Counter</span>
-              <span class="tag">deque</span>
-            </div>
-          </a>
-        </div>
-
-        <!-- ==================== LEVEL 03: ADVANCED ==================== -->
-        <h2 class="section-title">[ LEVEL 03 ] ADVANCED_TECHNIQUES</h2>
-        <div class="skill-grid">
-          <a href="#" class="skill-card locked" data-skill="metaclasses">
-            <div class="skill-header">
-              <div class="skill-title">Metaclasses & ABCs</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Type metaclass, __new__ vs __init__, abstract base classes, class
-              factory patterns.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">type</span>
-              <span class="tag">ABC</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="descriptors">
-            <div class="skill-header">
-              <div class="skill-title">Descriptors & Properties</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              __get__/__set__/__delete__, property descriptors, data vs non-data
-              descriptors.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">descriptor</span>
-              <span class="tag">@property</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="async">
-            <div class="skill-header">
-              <div class="skill-title">Async/Await & Concurrency</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              asyncio, coroutines, async/await syntax, event loops,
-              concurrent.futures, threading vs multiprocessing.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">async</span>
-              <span class="tag">await</span>
-              <span class="tag">asyncio</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="memory">
-            <div class="skill-header">
-              <div class="skill-title">Memory Management</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Garbage collection, reference counting, __slots__, memory
-              profiling, weakref module.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">gc</span>
-              <span class="tag">__slots__</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="testing">
-            <div class="skill-header">
-              <div class="skill-title">Testing & Debugging</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              unittest, pytest, mocking, test coverage, debugging with pdb,
-              logging best practices.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">pytest</span>
-              <span class="tag">mock</span>
-              <span class="tag">pdb</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="performance">
-            <div class="skill-header">
-              <div class="skill-title">Performance Optimization</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Profiling (cProfile, timeit), algorithm complexity, caching
-              strategies, CPython internals.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">cProfile</span>
-              <span class="tag">timeit</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="typing">
-            <div class="skill-header">
-              <div class="skill-title">Type Hints & Annotations</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              typing module, generics, Protocol, TypeVar, Optional, Union, mypy
-              static type checker.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">typing</span>
-              <span class="tag">mypy</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="packaging">
-            <div class="skill-header">
-              <div class="skill-title">Package Creation & Distribution</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              setup.py, pyproject.toml, building packages, PyPI publishing,
-              semantic versioning.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">setuptools</span>
-              <span class="tag">PyPI</span>
-            </div>
-          </a>
-        </div>
-
-        <!-- ==================== LEVEL 04: EXPERT ==================== -->
-        <h2 class="section-title">[ LEVEL 04 ] EXPERT_MASTERY</h2>
-        <div class="skill-grid">
-          <a href="#" class="skill-card locked" data-skill="design-patterns">
-            <div class="skill-header">
-              <div class="skill-title">Design Patterns</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Singleton, Factory, Observer, Strategy, Decorator patterns, SOLID
-              principles in Python.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">patterns</span>
-              <span class="tag">SOLID</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="web-frameworks">
-            <div class="skill-header">
-              <div class="skill-title">Web Frameworks (Django/Flask)</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Django ORM, Flask routing, REST APIs, authentication, middleware,
-              template engines.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">Django</span>
-              <span class="tag">Flask</span>
-              <span class="tag">REST</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="data-science">
-            <div class="skill-header">
-              <div class="skill-title">Data Science Stack</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              NumPy arrays, Pandas DataFrames, Matplotlib/Seaborn visualization,
-              scikit-learn basics.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">pandas</span>
-              <span class="tag">numpy</span>
-              <span class="tag">sklearn</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="database">
-            <div class="skill-header">
-              <div class="skill-title">Database Integration</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              SQLite3, PostgreSQL, SQLAlchemy ORM, database migrations,
-              connection pooling.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">SQL</span>
-              <span class="tag">ORM</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="api-design">
-            <div class="skill-header">
-              <div class="skill-title">API Design & Integration</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              RESTful principles, FastAPI, requests library, OAuth, rate
-              limiting, API versioning.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">FastAPI</span>
-              <span class="tag">REST</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="security">
-            <div class="skill-header">
-              <div class="skill-title">Security Best Practices</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Input validation, SQL injection prevention, cryptography, secrets
-              module, secure coding.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">crypto</span>
-              <span class="tag">security</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="devops">
-            <div class="skill-header">
-              <div class="skill-title">DevOps & CI/CD</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Docker containers, virtual environments, GitHub Actions,
-              deployment strategies, logging.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">Docker</span>
-              <span class="tag">CI/CD</span>
-            </div>
-          </a>
-
-          <a href="#" class="skill-card locked" data-skill="architecture">
-            <div class="skill-header">
-              <div class="skill-title">System Architecture</div>
-              <div class="skill-status"></div>
-            </div>
-            <div class="skill-description">
-              Microservices, message queues, caching (Redis), scalability
-              patterns, monitoring.
-            </div>
-            <div class="skill-tags">
-              <span class="tag">architecture</span>
-              <span class="tag">scale</span>
-            </div>
-          </a>
-        </div>
-      </section>
+      <div class="nav-item active" onclick="loadTopic('variables')">
+        01. Variables & Data
+      </div>
+      <div class="nav-item" onclick="loadTopic('control')">
+        02. Control Flow
+      </div>
+      <div class="nav-item" onclick="loadTopic('functions')">03. Functions</div>
+      <div class="nav-item" onclick="loadTopic('datastructures')">
+        04. Data Structures
+      </div>
+      <div class="nav-item" onclick="loadTopic('intermediate')">
+        05. String & List Logic
+      </div>
+      <div class="nav-item" onclick="loadTopic('errors')">
+        06. Error Handling
+      </div>
+      <div class="nav-item" onclick="loadTopic('files')">07. File Handling</div>
+      <div class="nav-item" onclick="loadTopic('modules')">
+        08. Modules & Packages
+      </div>
+      <div class="nav-item" onclick="loadTopic('functional')">
+        09. Functional Prog
+      </div>
+      <div class="nav-item" onclick="loadTopic('oop')">10. OOP Concepts</div>
+      <div class="nav-item" onclick="loadTopic('performance')">
+        11. Performance & Memory
+      </div>
+      <div class="nav-item" onclick="loadTopic('concurrency')">
+        12. Concurrency/Parallel
+      </div>
     </div>
 
-    <!-- DETAIL PAGE TEMPLATE -->
-    <div id="detail-page" class="detail-page">
-      <nav class="sub-nav">
-        <a href="#" id="back-to-dashboard" class="back-link"
-          >← BACK_TO_DASHBOARD</a
+    <div class="main-content">
+      <div class="terminal-header">
+        <button class="mobile-toggle" onclick="toggleMenu()">MENU</button>
+        <span
+          class="text-[9px] md:text-xs orbitron opacity-50 tracking-[0.2em]"
         >
-      </nav>
-
-      <div class="detail-header">
-        <h1 id="detail-title">Variables & Data Types</h1>
-        <span class="status-badge complete">✓ MASTERED</span>
+          CORE_FOUNDATION // MODULE: <span id="module-title">VARIABLES</span>
+        </span>
+        <a href="index.html" class="btn-bridge">BRIDGE</a>
       </div>
 
-      <div class="detail-content">
-        <div class="concept-section">
-          <h2>WHAT_I_LEARNED</h2>
-          <p>
-            Variables are containers for storing data values. Python is
-            dynamically typed, meaning you don't need to declare variable types
-            explicitly. I've mastered how to work with all fundamental data
-            types and understand when to use each one.
-          </p>
-          <ul class="key-points">
-            <li>Variables store references to objects in memory</li>
-            <li>
-              Python uses duck typing - if it looks like a duck and quacks like
-              a duck, it's a duck
-            </li>
-            <li>
-              Mutable vs immutable types affect how data is passed to functions
-            </li>
-            <li>Type conversion and casting for flexibility</li>
-          </ul>
-        </div>
-
-        <div class="concept-section">
-          <h2>CODE_EXAMPLES_I_WROTE</h2>
-
-          <h3
-            style="
-              color: var(--soul-blue);
-              margin: 20px 0 10px;
-              font-size: 1rem;
-            "
-          >
-            Example 1: Basic Data Types
-          </h3>
-          <div class="code-example">
-            <pre><span class="code-comment"># String manipulation</span>
-name = "Ashanti Cocroft"
-role = "IT Intern Developer"
-message = f"{name} is a {role}"  <span class="code-comment"># f-strings for formatting</span>
-
-<span class="code-comment"># Numbers and operations</span>
-age = 21
-experience_months = 6
-skill_level = 8.5  <span class="code-comment"># float for decimals</span>
-
-<span class="code-comment"># Boolean logic</span>
-is_employed = True
-ready_for_full_stack = True
-needs_more_practice = False</pre>
-          </div>
-
-          <h3
-            style="
-              color: var(--soul-blue);
-              margin: 20px 0 10px;
-              font-size: 1rem;
-            "
-          >
-            Example 2: Collections
-          </h3>
-          <div class="code-example">
-            <pre><span class="code-comment"># Lists - ordered, mutable</span>
-python_skills = ['variables', 'loops', 'functions', 'OOP']
-python_skills.append('Django')  <span class="code-comment"># add items</span>
-python_skills[0] = 'advanced variables'  <span class="code-comment"># modify</span>
-
-<span class="code-comment"># Tuples - ordered, immutable</span>
-coordinates = (31.3271, -89.2903)  <span class="code-comment"># Hattiesburg!</span>
-
-<span class="code-comment"># Dictionaries - key-value pairs</span>
-portfolio = {
-    'name': 'Ashanti',
-    'skills': ['Python', 'Django', 'JavaScript'],
-    'projects': 12,
-    'github': 'github.com/ashanti'
-}
-
-<span class="code-comment"># Sets - unordered, unique values</span>
-completed_courses = {'Python', 'Git', 'SQL'}
-completed_courses.add('Django')</pre>
-          </div>
-        </div>
-
-        <div class="concept-section">
-          <h2>HOW_I_CAN_EXPLAIN_IT</h2>
-          <p>
-            Think of variables as labeled boxes. Each box (variable) has a name
-            on it and can hold different types of items (data). A string is like
-            a note with text, an integer is a whole number, a float has
-            decimals, and a boolean is a yes/no answer.
-          </p>
-        </div>
-
-        <div class="project-showcase">
-          <h2>REAL_PROJECT_EXAMPLES</h2>
-          <div class="project-grid">
-            <div class="project-card">
-              <h3 class="project-title">📊 Data Validator Script</h3>
-              <p class="project-desc">
-                Built a script that validates user input, converts types, and
-                stores data in appropriate collections. Used dictionaries to map
-                validation rules and lists to store processed records.
-              </p>
-              <div class="screenshot-placeholder">
-                [SCREENSHOT: validator_output.png]
-              </div>
-            </div>
-
-            <div class="project-card">
-              <h3 class="project-title">🎯 Student Grade Manager</h3>
-              <p class="project-desc">
-                Created a grade management system using dictionaries to store
-                student data, lists for grade records, and type conversion to
-                handle user input. Demonstrated understanding of data structure
-                selection.
-              </p>
-              <div class="screenshot-placeholder">
-                [SCREENSHOT: grade_manager.png]
-              </div>
-            </div>
-          </div>
-        </div>
+      <div id="terminal-body">
+        <div id="content-area"></div>
       </div>
     </div>
 
     <script>
-      const mainDashboard = document.getElementById("main-dashboard");
-      const detailPage = document.getElementById("detail-page");
-      const backButton = document.getElementById("back-to-dashboard");
-      const loader = document.querySelector(".loader-wrapper");
-
-      // 1. LOADER INITIALIZATION
-      window.addEventListener("load", () => {
-        // Simulate loading time for the "Soul Bar" animation (3s)
-        setTimeout(() => {
-          loader.style.opacity = "0";
-          setTimeout(() => {
-            loader.style.display = "none";
-          }, 1000); // Wait for fade out to finish
-        }, 3000);
-      });
-
-      // 2. SKILL DATA STORAGE
-      const skillData = {
+      // Toggle function for Mobile Menu
+      function toggleMenu() {
+        document.getElementById("sidebar").classList.toggle("active");
+      }
+      const topics = {
         variables: {
-          title: "Variables & Data Types",
-          status: "complete",
-          learned:
-            "Variables are containers for storing data values. Python is dynamically typed, meaning you don't need to declare variable types explicitly. I've mastered how to work with all fundamental data types and understand when to use each one.",
-          points: [
-            "Variables store references to objects in memory",
-            "Python uses duck typing - if it looks like a duck and quacks like a duck, it's a duck",
-            "Mutable vs immutable types affect how data is passed to functions",
-            "Type conversion and casting for flexibility",
-          ],
+          title: "01. Variables, Data Types & Memory",
+          explain: `Think of Python memory as a giant warehouse. Instead of putting items into fixed boxes, Python creates an 'object' (the data) and lets you stick a 'label' (the variable) on it.
+
+          This section covers the absolute essentials: how Python stores information, how we change that data's shape (Casting), and how we document our logic for other engineers using Comments and Docstrings.`,
+
+          code: `# 1. THE CORE FOUR (Basic Data Types)
+      # ---------------------------------------------------------
+      pilot_name = "Ashanti"   # str: Text wrapped in quotes
+      sector_id = 7            # int: Whole numbers (Integers)
+      shield_max = 0.95        # float: Decimal numbers (Floating Point)
+      is_active = True         # bool: Logic switches (True or False)
+
+      # 2. TYPE CASTING (The Shape-Shifter)
+      # ---------------------------------------------------------
+      # Sometimes data arrives as text, but we need it as a number.
+      raw_input = "100"
+      converted = int(raw_input)    # Now it's a number: 100
+      as_decimal = float(converted) # Now it's a decimal: 100.0
+      as_text = str(as_decimal)     # Back to text: "100.0"
+
+      # 3. COMMENTS & DOCSTRINGS (Engineer Communication)
+      # ---------------------------------------------------------
+      # Use hashtags for quick notes to explain "Why" you did something.
+
+      """
+      This is a Docstring. It's like a 'System Manual' for your code.
+      Professional developers use these to explain complex functions
+      so that recruiters know the code is production-ready.
+      """
+
+      # 4. STRING MASTER CLASS (The Toolbox)
+      # ---------------------------------------------------------
+      # Strings are a 'chain' of characters. You can slice them up!
+      msg = "Python Mastery"
+      print(msg[0:6])   # Grabs "Python" (Slicing)
+      print(msg.lower()) # lowercase version
+
+      # F-STRINGS: The modern way to inject variables into text
+      status = f"Pilot {pilot_name} is currently in Sector {sector_id}."
+
+      # 5. LISTS (The Digital Shopping List)
+      # ---------------------------------------------------------
+      # Lists are 'Mutable' (Changeable) collections of items.
+      tools = ["Clippers", "Trimmers"]
+      tools.append("Razor")       # Add an item to the end
+      tools[0] = "Laser-Cutter"   # Replace the first item (Index 0)
+
+      # 6. IDENTITY VS VALUE (The Memory Trick)
+      # ---------------------------------------------------------
+      # Use 'type()' to check data and 'id()' to see the memory address.
+      x = [1, 2, 3]
+      y = x                 # y points to the SAME list as x
+      z = list(x)           # z is a brand NEW list with same values
+
+      print(x == z)         # True: The content is the same
+      print(x is z)         # False: They live at different memory IDs!
+      print(type(shield_max)) # Output: <class 'float'>`,
         },
-        "control-flow": {
-          title: "Control Flow",
-          status: "complete",
-          learned:
-            "Control flow determines the order in which code executes. I've mastered if/elif/else statements, comparison operators, and logical operators.",
-          points: [
-            "if/elif/else for decision making",
-            "Comparison operators: ==, !=, <, >, <=, >=",
-            "Logical operators: and, or, not",
-            "Truthy and falsy values in Python",
-          ],
+        control: {
+          title: "02. Control Flow: The Brain of the System",
+          explain: `Control flow is the decision-making process of your code. By using 'If' statements and 'Loops', we tell Python exactly when to execute certain blocks of code.
+
+          Key Concepts:
+          1. INDENTATION: Python doesn't use brackets {} like C++ or Java; it uses whitespace. This enforces clean, readable code.
+          2. BOOLEAN LOGIC: Decisions are based on True/False outcomes.
+          3. EFFICIENCY: Loops (For/While) allow a single block of code to process thousands of data points in milliseconds.`,
+
+          code: `# 1. CONDITIONAL LOGIC (If, Elif, Else)
+      # ---------------------------------------------------------
+      # Think of this as a 'Crossroad' in your code.
+      fuel_level = 15
+
+      if fuel_level > 80:
+          print("Status: Optimal. Proceeding with mission.")
+      elif fuel_level > 20:
+          print("Status: Warning. Monitor fuel levels.")
+      else:
+          # This runs if all conditions above are False
+          print("Status: CRITICAL. Emergency landing initiated.")
+
+      # 2. COMPARISON & LOGICAL OPERATORS
+      # ---------------------------------------------------------
+      # Operators: == (equal), != (not equal), > , <
+      # Logical: and, or, not
+      is_day = True
+      is_clear = True
+
+      if is_day and is_clear:
+          print("Visibility is High.")
+
+      # 3. THE 'FOR' LOOP (Iterating through Collections)
+      # ---------------------------------------------------------
+      # Use 'For' when you know how many times to repeat.
+      sectors = ["Alpha", "Beta", "Gamma", "Delta"]
+
+      print("Scanning Sectors...")
+      for sector in sectors:
+          print(f"Slicing through Sector: {sector}")
+
+      # 4. THE 'WHILE' LOOP (Iterating until a Condition changes)
+      # ---------------------------------------------------------
+      # Use 'While' when you don't know the exact end point.
+      countdown = 5
+      while countdown > 0:
+          print(f"Ignition in... {countdown}")
+          countdown -= 1  # Important: Change the condition to avoid infinite loops!
+      print("LIFTOFF")
+
+      # 5. LOOP CONTROL (Break and Continue)
+      # ---------------------------------------------------------
+      for i in range(10):
+          if i == 3:
+              continue  # Skip 3 and move to the next number
+          if i == 7:
+              break     # Stop the loop entirely at 7
+          print(f"Processing Unit {i}")
+
+      # 6. LIST COMPREHENSIONS (The Pythonic Shortcut)
+      # ---------------------------------------------------------
+      # A powerful way to create new lists in a single line.
+      numbers = [1, 2, 3, 4, 5]
+      # Create a list of squares for only the even numbers
+      squares = [n**2 for n in numbers if n % 2 == 0]
+      print(squares) # Output: [4, 16]`,
         },
-        loops: {
-          title: "Loops & Iteration",
-          status: "complete",
-          learned:
-            "Loops allow you to execute code repeatedly. I've mastered for loops, while loops, and list comprehensions.",
-          points: [
-            "for loops iterate over sequences",
-            "while loops continue until a condition is false",
-            "break exits the loop, continue skips to next iteration",
-            "List comprehensions for elegant one-line loops",
-          ],
+        functions: {
+          title: "03. Functions: Building Reusable Tools",
+          explain: `Functions are like 'Mini-Programs' within your code. You define a task once, and then 'call' it whenever you need it. This is the secret to building large-scale systems like the Headzup Node without getting lost in messy code.
+
+          Key Concepts:
+          1. MODULARITY: Breaking big problems into small, manageable pieces.
+          2. REUSABILITY: Write once, use everywhere.
+          3. ABSTRACTION: Hiding the complex math inside a simple name (e.g., you don't need to know how an engine works to turn the key).`,
+
+          code: `# 1. DEFINING A BASIC FUNCTION
+      # ---------------------------------------------------------
+      def greet_pilot():
+          """Simple function with no inputs."""
+          print("Neural Link Established. Welcome, Ashanti.")
+
+      # Calling the function
+      greet_pilot()
+
+      # 2. PARAMETERS & ARGUMENTS (Feeding the machine)
+      # ---------------------------------------------------------
+      # 'name' is a parameter—a placeholder for data.
+      def welcome_user(name, rank="Recruit"):
+          # rank="Recruit" is a DEFAULT value if nothing is provided
+          print(f"Access Granted: {rank} {name}")
+
+      welcome_user("Ashanti", "System Architect")
+      welcome_user("Stranger") # Uses the default rank
+
+      # 3. THE RETURN STATEMENT (Getting data back)
+      # ---------------------------------------------------------
+      # Functions can 'calculate' something and hand it back to you.
+      def calculate_power(core_1, core_2):
+          total = core_1 + core_2
+          return total  # This sends the result back to the caller
+
+      current_output = calculate_power(45, 50)
+      print(f"Total Power Output: {current_output}MW")
+
+      # 4. SCOPE: LOCAL VS GLOBAL (The 'Bubble' Concept)
+      # ---------------------------------------------------------
+      global_var = "I am everywhere"
+
+      def scope_test():
+          local_var = "I only exist inside this function"
+          print(local_var)
+          print(global_var)
+
+      scope_test()
+      # print(local_var) # This would CRASH the code! (Out of scope)
+
+      # 5. LAMBDA FUNCTIONS (The 'Quick-Fix' Tool)
+      # ---------------------------------------------------------
+      # Use these for simple, one-line calculations.
+      # Syntax: lambda inputs : output
+      square = lambda x: x * x
+      print(f"Square of 5: {square(5)}")
+
+      # 6. *ARGS & **KWARGS (Handling Unlimited Inputs)
+      # ---------------------------------------------------------
+      # Useful when you don't know how many items are coming in.
+      def list_components(*parts):
+          for part in parts:
+              print(f"Installing: {part}")
+
+      list_components("CPU", "GPU", "RAM", "Cooling Fan")`,
         },
-        // Add more skills here as needed
+        datastructures: {
+          title: "04. Data Structures: Organizing the Archive",
+          explain: `In Python, data structures are the different 'containers' we use to hold information. Choosing the right container can make your program run 100x faster.
+
+          Key Structures:
+          1. LISTS: Ordered and changeable. Great for queues.
+          2. TUPLES: Immutable (locked). Perfect for data that should never change, like GPS coordinates.
+          3. DICTIONARIES: Key-Value pairs. The fastest way to look up specific information.
+          4. SETS: Unordered collections of unique items. Best for removing duplicates automatically.`,
+
+          code: `# 1. TUPLES (The 'Locked' List)
+      # ---------------------------------------------------------
+      # Tuples use parentheses (). Once created, they cannot change.
+      coordinates = (40.7128, -74.0060)
+      # coordinates[0] = 50.0  # This would throw an ERROR!
+
+      # 2. DICTIONARIES (The Digital Phonebook)
+      # ---------------------------------------------------------
+      # Maps 'Keys' to 'Values'. Extremely fast lookup speed.
+      pilot_data = {
+          "name": "Ashanti",
+          "rank": "Architect",
+          "clearance": 5
+      }
+
+      # Accessing data by Key
+      print(f"Pilot Rank: {pilot_data['rank']}")
+
+      # Adding or updating data
+      pilot_data["status"] = "Active"
+
+      # 3. SETS (The Duplicate Destroyer)
+      # ---------------------------------------------------------
+      # Sets automatically remove any repeating items.
+      raw_ids = [101, 102, 101, 105, 102]
+      unique_ids = set(raw_ids)
+      print(unique_ids)  # Output: {101, 102, 105}
+
+      # 4. NESTED STRUCTURES (Complex Systems)
+      # ---------------------------------------------------------
+      # You can put lists inside dictionaries, and vice versa.
+      galaxy_map = {
+          "Sector_A": ["Star_1", "Star_2"],
+          "Sector_B": ["Star_3", "Star_4"]
+      }
+
+      # 5. DICTIONARY METHODS
+      # ---------------------------------------------------------
+      # .keys(), .values(), and .items()
+      for key, value in pilot_data.items():
+          print(f"Log -> {key}: {value}")
+
+      # 6. MEMBERSHIP TESTING
+      # ---------------------------------------------------------
+      # Checking if an item exists is incredibly fast in Sets and Dicts.
+      if "name" in pilot_data:
+          print("Name record found.")`,
+        },
+        intermediate: {
+          title: "05. String & List Logic: Data Surgery",
+          explain: `In the intermediate phase, we stop just 'holding' data and start 'transforming' it. This is where you learn how to perform surgery on strings and lists to extract exactly what you need.
+
+          Key Concepts:
+          1. ADVANCED SLICING: Grabbing specific chunks or reversing data in one line.
+          2. SEQUENCE METHODS: Powerful built-in tools to sort, count, and find data.
+          3. TRANSFORMATION: Converting between strings and lists to clean up messy data.`,
+
+          code: `# 1. ADVANCED SLICING [start:stop:step]
+      # ---------------------------------------------------------
+      # Slicing works on both Strings and Lists.
+      data_stream = "SYSTEM_LOG_4092"
+
+      # Get the last 4 characters
+      log_id = data_stream[-4:]
+      # Reverse the entire string/list using a negative step
+      reversed_stream = data_stream[::-1]
+
+      # 2. LIST LOGIC & SORTING
+      # ---------------------------------------------------------
+      scores = [450, 1200, 85, 3000, 510]
+
+      scores.sort()           # Sorts the original list (In-place)
+      scores.reverse()        # Flips the list
+      top_score = max(scores) # Quick statistical lookup
+
+      # 3. SPLIT & JOIN (The Data Cleaner's Best Friend)
+      # ---------------------------------------------------------
+      # Turning a string into a list, and a list back into a string.
+      raw_csv = "Alpha,Beta,Gamma,Delta"
+      sector_list = raw_csv.split(",") # Turns string into a list
+
+      # Joining them back with a custom separator
+      formatted_string = " | ".join(sector_list)
+      print(f"Active Sectors: {formatted_string}")
+
+      # 4. FINDING & COUNTING
+      # ---------------------------------------------------------
+      # Check how many times an item appears or find its index.
+      system_status = "ONLINE_ONLINE_OFFLINE_ONLINE"
+      print(system_status.count("ONLINE")) # Output: 3
+      print(system_status.find("OFFLINE")) # Returns starting index
+
+      # 5. STRING CLEANING (Strip & Replace)
+      # ---------------------------------------------------------
+      user_input = "   ashanti_dev   "
+      clean_user = user_input.strip() # Removes the extra whitespace
+      filename = "report_v1.txt"
+      new_filename = filename.replace(".txt", ".pdf")
+
+      # 6. NESTED LIST COMPREHENSION (Intermediate)
+      # ---------------------------------------------------------
+      # Creating a coordinate grid for a 3x3 sector map
+      matrix = [[(x, y) for x in range(3)] for y in range(3)]`,
+        },
+        /* --- COPY AND PASTE THIS INTO YOUR TOPICS OBJECT --- */
+
+        errors: {
+          title: "06. Error Handling: Building Crash-Proof Systems",
+          explain: `Error handling is about foresight. Instead of letting your program 'blow up' when it hits a problem, you use 'Exceptions' to catch the error, log it, and keep the system running.
+
+          Key Concepts:
+          1. RESILIENCE: Preventing a single minor error from stopping the entire mission.
+          2. SPECIFICITY: Catching exact errors (like 'File Not Found') rather than generic ones.
+          3. CLEANUP: Using the 'Finally' block to ensure resources (like databases) are closed even if an error occurs.`,
+
+          code: `# 1. THE BASIC TRY-EXCEPT BLOCK
+      # ---------------------------------------------------------
+      # Attempt an operation that might fail.
+      try:
+          result = 10 / 0  # This will cause a ZeroDivisionError
+      except ZeroDivisionError:
+          print("Log: Cannot divide by zero. Adjusting parameters...")
+
+      # 2. CATCHING MULTIPLE SPECIFIC ERRORS
+      # ---------------------------------------------------------
+      # Professional code handles different problems in different ways.
+      try:
+          val = int("not_a_number")
+      except ValueError:
+          print("Error: Input must be a numeric string.")
+      except TypeError:
+          print("Error: Incorrect data type provided.")
+
+      # 3. THE 'ELSE' AND 'FINALLY' CLAUSES
+      # ---------------------------------------------------------
+      try:
+          print("Connecting to Polish Center Database...")
+          # Simulate work
+          connection_active = True
+      except Exception as e:
+          print(f"Connection Failed: {e}")
+      else:
+          # This runs ONLY if no error happened
+          print("Handshake Successful. Data synced.")
+      finally:
+          # This ALWAYS runs (Perfect for closing files or connections)
+          print("Closing connection to prevent memory leaks.")
+
+      # 4. RAISING YOUR OWN ERRORS
+      # ---------------------------------------------------------
+      # You can force an error if a specific business rule is broken.
+      def set_age(age):
+          if age < 0:
+              raise ValueError("Age cannot be negative!")
+          return f"Age set to {age}"
+
+      # 5. CUSTOM EXCEPTIONS (Advanced)
+      # ---------------------------------------------------------
+      class SystemOverheatError(Exception):
+          """Custom error for a specific system failure."""
+          pass
+
+      # 6. ASSERTIONS (Debugging Tool)
+      # ---------------------------------------------------------
+      # Use these to 'sanity check' your code during development.
+      limit = 100
+      assert limit > 50, "Limit is too low for deployment!"`,
+        },
+
+        files: {
+          title: "07. File Handling: Persistent Data Systems",
+          explain: `File handling is how your program interacts with the hard drive. Whether you are saving high scores, reading settings, or logging system errors, you must handle files safely to prevent data corruption.
+
+          Key Concepts:
+          1. CONTEXT MANAGERS: Using the 'with' statement ensures files are closed automatically, even if the program crashes.
+          2. MODES: Understanding 'r' (read), 'w' (write), and 'a' (append) to protect existing data.
+          3. EFFICIENCY: Reading files line-by-line instead of loading a massive 1GB file into memory all at once.`,
+
+          code: `# 1. THE MODERN WAY: CONTEXT MANAGERS
+      # ---------------------------------------------------------
+      # 'with' handles the opening and closing for you automatically.
+      with open("system_log.txt", "w") as file:
+          file.write("Neural Link Initialized\\n")
+          file.write("Status: Optimized\\n")
+      # File is now CLOSED and memory is cleared.
+
+      # 2. READING DATA (The Safe Way)
+      # ---------------------------------------------------------
+      try:
+          with open("system_log.txt", "r") as file:
+              content = file.read()
+              print(f"File Contents:\\n{content}")
+      except FileNotFoundError:
+          print("Error: Targeted log file does not exist.")
+
+      # 3. APPENDING (Adding without Erasing)
+      # ---------------------------------------------------------
+      # 'a' mode adds to the end of the file instead of overwriting it.
+      with open("system_log.txt", "a") as file:
+          file.write("New Entry: KINETIC_PURGE initiated.\\n")
+
+      # 4. ITERATING OVER LARGE FILES
+      # ---------------------------------------------------------
+      # Don't use .read() for huge files! Loop through them line by line.
+      with open("system_log.txt", "r") as file:
+          for line in file:
+              # Process each line one at a time to save RAM
+              print(f"Processing: {line.strip()}")
+
+      # 5. WORKING WITH CSV DATA (Intermediate)
+      # ---------------------------------------------------------
+      import csv
+      data = [["Pilot", "Score"], ["Ashanti", 5000], ["Zane", 4200]]
+
+      with open("leaderboard.csv", "w", newline="") as f:
+          writer = csv.writer(f)
+          writer.writerows(data)
+
+      # 6. JSON: THE WEB STANDARD (Advanced)
+      # ---------------------------------------------------------
+      import json
+      config = {"theme": "holo-blue", "resolution": "4K", "audio": True}
+
+      # Saving a dictionary as a JSON file
+      with open("config.json", "w") as f:
+          json.dump(config, f, indent=4)`,
+        },
+        modules: {
+          title: "08. Modules & Packages: Structural Integrity",
+          explain: `Modules are just Python files (.py), and Packages are collections of those modules. Organizing your code this way makes it easier to maintain, test, and scale.
+
+          Key Concepts:
+          1. DRY PRINCIPLE: Don't Repeat Yourself. Import logic instead of copying it.
+          2. STANDARD LIBRARY: Python's 'Batteries Included' philosophy provides built-in tools for math, time, and OS tasks.
+          3. THIRD-PARTY PACKAGES: Using 'pip' to tap into millions of external libraries like NumPy or Requests.`,
+
+          code: `# 1. IMPORTING BUILT-IN MODULES
+      # ---------------------------------------------------------
+      import math
+      import random as rnd  # Using an alias to type faster
+
+      print(math.sqrt(144)) # Output: 12.0
+      print(rnd.randint(1, 100))
+
+      # 2. SELECTIVE IMPORTS
+      # ---------------------------------------------------------
+      # Import only exactly what you need to save memory.
+      from datetime import datetime, timedelta
+
+      current_time = datetime.now()
+      print(f"System Time: {current_time}")
+
+      # 3. CREATING YOUR OWN MODULE
+      # ---------------------------------------------------------
+      # Assume you have a file named 'engine_utils.py'
+      # You can bring its logic into your main script:
+      # import engine_utils
+      # engine_utils.start_thrusters()
+
+      # 4. THE __name__ == "__main__" GUARD
+      # ---------------------------------------------------------
+      # This is crucial! It prevents code from running automatically
+      # when a file is imported as a module elsewhere.
+      if __name__ == "__main__":
+          print("This script is running directly. Initiating Core...")
+
+      # 5. PACKAGES & __init__.py
+      # ---------------------------------------------------------
+      # A directory becomes a 'Package' when it contains an __init__.py file.
+      # This allows for structured imports like:
+      # from polish_center.logic.python_module import master_function
+
+      # 6. PIP: THE PACKAGE INSTALLER
+      # ---------------------------------------------------------
+      # High-level developers use virtual environments to manage packages.
+      # Command: pip install requests
+      # Usage:
+      # import requests
+      # response = requests.get("https://api.headzup.com/status")`,
+        },
+
+        functional: {
+          title: "09. Functional Programming: The Elegant Approach",
+          explain: `Functional programming focuses on using 'Pure Functions' and avoiding 'Side Effects'. By treating data as immutable and using high-order functions, you can write shorter, more powerful code that is significantly easier to debug.
+
+          Key Concepts:
+          1. IMMUTABILITY: Instead of changing an existing list, you create a new one with the transformed data.
+          2. HIGH-ORDER FUNCTIONS: Functions that take other functions as inputs (like Map and Filter).
+          3. DECLARATIVE CODE: Expressing logic without explicitly describing the flow of control.`,
+
+          code: `# 1. THE LAMBDA (Anonymous Functions)
+      # ---------------------------------------------------------
+      # A quick way to write functions without a name.
+      # Syntax: lambda arguments: expression
+      multiply = lambda x, y: x * y
+      print(f"Result: {multiply(10, 5)}")
+
+      # 2. MAP: Transforming Sequences
+      # ---------------------------------------------------------
+      # Applies a function to EVERY item in a list.
+      nums = [1, 2, 3, 4, 5]
+      # Double every number in the list
+      doubled = list(map(lambda x: x * 2, nums))
+      print(f"Doubled: {doubled}")
+
+      # 3. FILTER: Selective Extraction
+      # ---------------------------------------------------------
+      # Keeps only the items that return 'True' from a function.
+      temperatures = [98.6, 102.4, 97.9, 104.1, 99.0]
+      # Keep only 'High' temperatures
+      fever_checks = list(filter(lambda t: t > 100, temperatures))
+      print(f"Detected Fevers: {fever_checks}")
+
+      # 4. REDUCE: Cumulative Calculation
+      # ---------------------------------------------------------
+      # Reduces a list to a single value (requires functools).
+      from functools import reduce
+      data = [1, 2, 3, 4]
+      # Multiplies all numbers together (1*2*3*4)
+      product = reduce(lambda x, y: x * y, data)
+      print(f"Product: {product}")
+
+      # 5. ZIP: Parallel Iteration
+      # ---------------------------------------------------------
+      # Combines two lists into a single collection of pairs.
+      names = ["Ashanti", "Zane", "Sky"]
+      roles = ["Architect", "Pilot", "Engineer"]
+
+      for name, role in zip(names, roles):
+          print(f"{name} assigned to: {role}")
+
+      # 6. ANY & ALL: Quick Logic Checks
+      # ---------------------------------------------------------
+      results = [True, True, False, True]
+      print(all(results))  # False (Not all are True)
+      print(any(results))  # True (At least one is True)`,
+        },
+        oop: {
+          title: "10. OOP: The Blueprint of Systems",
+          explain: `OOP is a way of organizing code so that it mimics real-world objects. Instead of writing a long list of instructions, you create 'Classes' (blueprints) and 'Objects' (the actual items built from those blueprints).
+    
+    The Four Pillars of OOP:
+    1. ENCAPSULATION: Keeping data safe inside the object.
+    2. INHERITANCE: Creating new classes based on existing ones to save time.
+    3. POLYMORPHISM: Allowing different objects to be treated as the same type.
+    4. ABSTRACTION: Hiding complex details and only showing the essentials.`,
+
+          code: `# 1. CREATING A CLASS (The Blueprint)
+# ---------------------------------------------------------
+class SystemNode:
+    def __init__(self, name, version):
+        self.name = name          # Attribute
+        self.version = version    # Attribute
+        self.__security_key = 123 # Private Attribute (Encapsulation)
+
+    def get_status(self):
+        return f"Node {self.name} is running Version {self.version}"
+
+# 2. CREATING AN OBJECT (The Instance)
+# ---------------------------------------------------------
+my_node = SystemNode("Python_Core", 5.0)
+print(my_node.get_status())
+
+# 3. INHERITANCE (Building on top of others)
+# ---------------------------------------------------------
+class SecurityNode(SystemNode):
+    def authorize(self):
+        return f"Node {self.name}: Access Granted."
+
+# SecurityNode gets name, version, and get_status() for free!
+gatekeeper = SecurityNode("Gatekeeper", 1.2)
+print(gatekeeper.authorize())
+
+# 4. POLYMORPHISM (Many Shapes)
+# ---------------------------------------------------------
+# Different classes can have the same method name.
+class PythonDev:
+    def code(self): return "Coding in Python..."
+
+class JavaDev:
+    def code(self): return "Coding in Java..."
+
+developers = [PythonDev(), JavaDev()]
+for dev in developers:
+    # We don't care what type they are, we just call .code()
+    print(dev.code())
+
+# 5. CLASS VS STATIC METHODS
+# ---------------------------------------------------------
+class Utilities:
+    @staticmethod
+    def calculate_uptime(days):
+        return days * 24
+
+print(f"Total Hours: {Utilities.calculate_uptime(5)}")
+
+# 6. ENCAPSULATION (Protecting Data)
+# ---------------------------------------------------------
+# Using getters and setters to control how data is accessed.
+class Pilot:
+    def __init__(self, name):
+        self._name = name
+
+    @property # Getter
+    def name(self):
+        return self._name.upper()`,
+        },
+        performance: {
+          title: "11. Performance & Memory: The Optimization Layer",
+          explain: `High-performance Python is about working with the language's internals rather than against them. By understanding how Python allocates memory and processes data, you can build systems that handle millions of requests without crashing.
+    
+    Key Concepts:
+    1. GENERATORS: Processing data one piece at a time to save massive amounts of RAM.
+    2. SLOTTING: Reducing the memory footprint of objects by up to 40-50%.
+    3. PROFILING: Identifying 'bottlenecks' (slow parts) in your code before they become problems.`,
+
+          code: `# 1. GENERATORS (Memory-Efficient Iteration)
+# ---------------------------------------------------------
+# Standard lists load EVERYTHING into RAM at once.
+# Generators use 'yield' to produce items only when needed.
+
+def heavy_data_stream():
+    for i in range(1000000):
+        yield f"Packet_{i}"
+
+# This won't crash your computer because it only holds 1 item in RAM!
+stream = heavy_data_stream()
+print(next(stream))
+print(next(stream))
+
+# 2. __SLOTS__ (Advanced RAM Optimization)
+# ---------------------------------------------------------
+# By default, Python objects use a dictionary to store data.
+# __slots__ tells Python to use a fixed, small array instead.
+
+class OptimizedNode:
+    __slots__ = ['id', 'status'] # Prevents extra memory usage
+    def __init__(self, id, status):
+        self.id = id
+        self.status = status
+
+# 3. LIST VS. GENERATOR EXPRESSIONS
+# ---------------------------------------------------------
+import sys
+
+# List comprehension (Memory intensive)
+list_comp = [i for i in range(10000)]
+# Generator expression (Memory light)
+gen_exp = (i for i in range(10000))
+
+print(f"List Size: {sys.getsizeof(list_comp)} bytes")
+print(f"Generator Size: {sys.getsizeof(gen_exp)} bytes")
+
+# 4. MEASURING EXECUTION TIME
+# ---------------------------------------------------------
+import time
+
+start_time = time.time()
+# Simulate a complex calculation
+sum(range(1000000))
+end_time = time.time()
+
+print(f"Execution Duration: {end_time - start_time:.4f} seconds")
+
+# 5. STRING CONCATENATION (The Pro Way)
+# ---------------------------------------------------------
+# DON'T do this: total_str = s1 + s2 + s3 (Slow!)
+# DO this: 
+words = ["System", "Architect", "Ashanti"]
+optimized_string = " ".join(words) # Much faster for large data
+
+# 6. LOCAL VS GLOBAL LOOKUP
+# ---------------------------------------------------------
+# Python looks up 'local' variables faster than 'global' ones.
+# Storing a global function in a local variable can speed up loops.
+def fast_loop():
+    local_len = len # Cache the global function locally
+    for _ in range(1000):
+        local_len("test")`,
+        },
+        concurrency: {
+          title: "12. Concurrency & Parallelism: Multi-Tasking Systems",
+          explain: `Modern software must do more than one thing at a time. However, Python has a 'Global Interpreter Lock' (GIL) that prevents multiple native threads from executing Python bytecodes at once. To be an expert, you must know how to bypass or work within these limits.
+    
+    The Three Paths of Execution:
+    1. THREADING: Best for I/O-bound tasks (Waiting for a web request or a file to save).
+    2. MULTIPROCESSING: Best for CPU-bound tasks (Heavy math/data crunching). It bypasses the GIL by using multiple CPU cores.
+    3. ASYNCIO: Single-threaded, cooperative multitasking. Perfect for high-performance web servers.`,
+
+          code: `# 1. MULTI-THREADING (Waiting for I/O)
+# ---------------------------------------------------------
+import threading
+import time
+
+def download_data(id):
+    print(f"Starting Download {id}...")
+    time.sleep(2) # Simulating a network delay
+    print(f"Download {id} Complete.")
+
+# Create threads to run tasks side-by-side
+t1 = threading.Thread(target=download_data, args=(1,))
+t2 = threading.Thread(target=download_data, args=(2,))
+
+t1.start()
+t2.start()
+t1.join() # Wait for thread to finish before moving on
+t2.join()
+
+# 2. MULTI-PROCESSING (Crushing Math)
+# ---------------------------------------------------------
+import multiprocessing
+
+def heavy_math(num):
+    # This runs on a completely separate CPU core!
+    return num * num * num
+
+if __name__ == "__main__":
+    with multiprocessing.Pool(processes=4) as pool:
+        results = pool.map(heavy_math, [1000, 2000, 3000, 4000])
+        print(f"Parallel Results: {results}")
+
+# 3. ASYNCIO (The Modern Way)
+# ---------------------------------------------------------
+import asyncio
+
+async def fetch_api():
+    print("Fetching status...")
+    await asyncio.sleep(1) # 'Await' lets other tasks run while waiting
+    return "Node_Status: OK"
+
+async def main():
+    # Run multiple async tasks together
+    result = await asyncio.gather(fetch_api(), fetch_api())
+    print(result)
+
+# To run: asyncio.run(main())
+
+# 4. THE GIL (Global Interpreter Lock)
+# ---------------------------------------------------------
+# Important Interview Fact: Python's GIL means only one thread
+# can run Python code at a time. This is why we use 
+# MULTIPROCESSING for heavy math, not Threading.
+
+# 5. RACE CONDITIONS & LOCKS
+# ---------------------------------------------------------
+# When two threads try to change the same variable, things break.
+lock = threading.Lock()
+shared_counter = 0
+
+def safe_increment():
+    global shared_counter
+    with lock: # Only one thread can enter this 'gate' at a time
+        shared_counter += 1
+
+# 6. FUTURE-PROOFING WITH CONCURRENT.FUTURES
+# ---------------------------------------------------------
+from concurrent.futures import ThreadPoolExecutor
+
+with ThreadPoolExecutor(max_workers=3) as executor:
+    executor.map(download_data, range(3))`,
+        },
       };
+      function loadTopic(id) {
+        const topic = topics[id];
+        if (!topic) return;
 
-      // 3. NAVIGATION LOGIC
-      document.querySelectorAll(".skill-card").forEach((card) => {
-        card.addEventListener("click", (e) => {
-          // Don't open if card is locked
-          if (card.classList.contains("locked")) {
-            e.preventDefault();
-            return;
-          }
+        // On mobile, close menu after selection
+        if (window.innerWidth <= 768) {
+          document.getElementById("sidebar").classList.remove("active");
+        }
 
-          const skillKey = card.getAttribute("data-skill");
-          const data = skillData[skillKey];
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((el) => el.classList.remove("active"));
+        if (event && event.target.classList.contains("nav-item")) {
+          event.target.classList.add("active");
+        }
 
-          if (data) {
-            e.preventDefault();
+        document.getElementById("module-title").innerText =
+          topic.title.toUpperCase();
 
-            // Update Detail Page Content
-            document.getElementById("detail-title").textContent = data.title;
-            document.querySelector(".detail-content p").textContent =
-              data.learned;
+        const container = document.getElementById("content-area");
+        container.innerHTML = `
+            <div class="mb-4 text-white orbitron tracking-widest text-xl underline decoration-cyan-500 underline-offset-8">${
+              topic.title
+            }</div>
+            <div class="text-sm text-gray-400 mb-6 leading-relaxed italic border-l-2 border-orange-500 pl-4">
+                // TERMINAL_EXPLANATION: ${topic.explain}
+            </div>
+            <div class="code-block relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-2 text-[8px] text-cyan-900 orbitron">PYTHON_V3.12</div>
+                <pre class="text-cyan-400 font-mono">${topic.code}</pre>
+            </div>
+            <div class="text-[10px] opacity-30 mt-10 orbitron">DB_NODE_SYNC_COMPLETE // SECTOR: ${id.toUpperCase()}</div>
+        `;
+        document.getElementById("terminal-body").scrollTop = 0;
+      }
 
-            const pointsList = document.querySelector(".key-points");
-            pointsList.innerHTML = ""; // Clear old points
-            data.points.forEach((point) => {
-              const li = document.createElement("li");
-              li.textContent = point;
-              pointsList.appendChild(li);
-            });
-
-            // Switch Views
-            mainDashboard.style.display = "none";
-            detailPage.classList.add("active");
-            window.scrollTo(0, 0);
-          }
-        });
-      });
-
-      // 4. BACK BUTTON LOGIC
-      backButton.addEventListener("click", (e) => {
-        e.preventDefault();
-        detailPage.classList.remove("active");
-        mainDashboard.style.display = "block";
-      });
+      window.onload = () => loadTopic("variables");
     </script>
   </body>
 </html>

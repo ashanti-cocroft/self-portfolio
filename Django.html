@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Django Engineering | System Architect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ui-red: #ff3e3e;
+        --ui-red-soft: rgba(255, 62, 62, 0.1);
+        --terminal-bg: #050505;
+      }
+      body {
+        background-color: var(--terminal-bg);
+        color: var(--ui-red);
+        font-family: "JetBrains Mono", monospace;
+        margin: 0;
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+      }
+
+      /* --- SIDEBAR NAV --- */
+      .sidebar {
+        width: 300px;
+        border-right: 1px solid rgba(255, 62, 62, 0.3);
+        background: rgba(10, 0, 0, 0.95);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        flex-shrink: 0;
+        transition: transform 0.3s ease-in-out;
+        z-index: 100;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 260px;
+          transform: translateX(-100%);
+        }
+        .sidebar.active {
+          transform: translateX(0);
+        }
+      }
+
+      .nav-item {
+        padding: 15px 20px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(255, 62, 62, 0.1);
+        transition: 0.3s;
+        color: rgba(255, 62, 62, 0.6);
+      }
+      .nav-item:hover,
+      .nav-item.active {
+        background: var(--ui-red-soft);
+        color: white;
+        border-left: 4px solid var(--ui-red);
+      }
+
+      /* --- MAIN TERMINAL --- */
+      .main-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        background: #000;
+        min-width: 0;
+        overflow: hidden;
+      }
+      .terminal-header {
+        padding: 15px 30px;
+        border-bottom: 1px solid rgba(255, 62, 62, 0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #0a0000;
+        flex-shrink: 0;
+      }
+
+      #terminal-body {
+        padding: 30px;
+        overflow-y: auto;
+        flex-grow: 1;
+        display: block;
+        scroll-behavior: smooth;
+      }
+
+      .code-block {
+        background: rgba(0, 0, 0, 0.9);
+        padding: 20px;
+        border: 1px solid rgba(255, 62, 62, 0.3);
+        margin-bottom: 30px;
+        width: 100%;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 12px;
+        color: #d1d5db;
+        margin: 0;
+      }
+
+      .dictionary-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 30px;
+        padding: 20px;
+        background: rgba(255, 62, 62, 0.05);
+        border: 1px solid rgba(255, 62, 62, 0.1);
+      }
+
+      @media (min-width: 1024px) {
+        .dictionary-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .dict-item {
+        border-left: 2px solid var(--ui-red);
+        padding-left: 15px;
+      }
+
+      .btn-bridge {
+        font-family: "Orbitron", sans-serif;
+        border: 1px solid var(--ui-red);
+        padding: 5px 15px;
+        font-size: 10px;
+        color: var(--ui-red);
+        text-decoration: none;
+      }
+      .btn-bridge:hover {
+        background: var(--ui-red);
+        color: black;
+      }
+
+      .status-tag {
+        font-size: 9px;
+        color: var(--ui-red);
+        border: 1px solid var(--ui-red);
+        padding: 4px 10px;
+        margin-bottom: 20px;
+        display: inline-block;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar orbitron" id="sidebar">
+      <div
+        class="p-6 text-white border-b border-red-900 mb-4 flex justify-between items-center"
+      >
+        <div>
+          <div class="text-[10px] text-red-500 mb-1 tracking-tighter">
+            // BACKEND_SYSTEMS
+          </div>
+          <div class="text-lg font-black tracking-widest">DJANGO_CORE</div>
+        </div>
+        <button class="md:hidden text-xs" onclick="toggleMenu()">CLOSE</button>
+      </div>
+      <div id="nav-container"></div>
+    </div>
+
+    <div class="main-content">
+      <div class="terminal-header">
+        <button
+          class="md:hidden border border-red-500 px-2 py-1 text-[10px]"
+          onclick="toggleMenu()"
+        >
+          MENU
+        </button>
+        <span
+          class="text-[9px] md:text-xs orbitron opacity-50 tracking-[0.2em]"
+        >
+          DATABASE_ARCH // MODULE: <span id="module-title">ENV_SETUP</span>
+        </span>
+        <a href="index.html" class="btn-bridge">BRIDGE</a>
+      </div>
+      <div id="terminal-body">
+        <div class="status-tag orbitron">STILL LEARNING IN PROCESS</div>
+        <div id="content-area"></div>
+      </div>
+    </div>
+
+    <script>
+      function toggleMenu() {
+        document.getElementById("sidebar").classList.toggle("active");
+      }
+
+      const topics = {
+        env_setup: {
+          title: "01. Isolated Environments",
+          explain:
+            "Professional Python engineering requires Virtual Environments (venv). This isolates project dependencies, ensuring that your local libraries do not interfere with the global system.",
+          code: `# Create virtual environment\npython -m venv venv\n\n# Activation\n.\\venv\\Scripts\\activate  # Windows\nsource venv/bin/activate # Unix\n\n# Install core framework\npip install django`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">VENV</p>
+                        <p class="text-[10px] text-gray-400">A tool to create isolated Python environments for package management.</p>
+                    </div>
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">PIP</p>
+                        <p class="text-[10px] text-gray-400">The standard package manager for installing Python libraries.</p>
+                    </div>`,
+        },
+        mvt_arch: {
+          title: "02. MVT Pattern",
+          explain:
+            "Django uses Model-View-Template. This modularizes the system: Models handle data, Templates handle display, and Views handle the execution logic.",
+          code: `django-admin startproject config .\npython manage.py startapp core_logic`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">MANAGE.PY</p>
+                        <p class="text-[10px] text-gray-400">A command-line utility that lets you interact with this Django project.</p>
+                    </div>`,
+        },
+        view_logic: {
+          title: "03. Views & Logic Flow",
+          explain:
+            "Views are functions that take web requests and return responses. They serve as the central processing unit of your backend applications.",
+          code: `from django.shortcuts import render\n\ndef main_view(request):\n    data = {'status': 'active'}\n    return render(request, 'index.html', data)`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">HTTP_REQUEST</p>
+                        <p class="text-[10px] text-gray-400">An object containing metadata like cookies, user data, and headers.</p>
+                    </div>`,
+        },
+        templates: {
+          title: "04. Dynamic Templates",
+          explain:
+            "Django Template Language (DTL) allows you to inject Python variables directly into HTML, making the UI dynamic and data-driven.",
+          code: `{% for item in items %}\n    <p>{{ item.name }}</p>\n{% empty %}\n    <p>No data found.</p>\n{% endfor %}`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">CONTEXT</p>
+                        <p class="text-[10px] text-gray-400">A dictionary mapping variable names to Python objects passed to a template.</p>
+                    </div>`,
+        },
+        models_db: {
+          title: "05. Database Modeling",
+          explain:
+            "Models define the schema of your database. Every class attribute represents a database field, managed entirely through Python code.",
+          code: `class Profile(models.Model):\n    user = models.CharField(max_length=50)\n    bio = models.TextField()\n    created = models.DateTimeField(auto_now_add=True)`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">FIELD_TYPES</p>
+                        <p class="text-[10px] text-gray-400">Classes like CharField or TextField that define what data the DB can store.</p>
+                    </div>`,
+        },
+        orm_queries: {
+          title: "06. ORM Query Logic",
+          explain:
+            "The Object-Relational Mapper allows you to perform complex database CRUD (Create, Read, Update, Delete) operations without writing SQL.",
+          code: `# Fetch data\nrecords = Profile.objects.all()\n\n# Filter with logic\nnew_users = Profile.objects.filter(created__year=2024)`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">QUERYSET</p>
+                        <p class="text-[10px] text-gray-400">A collection of data from the database that is 'lazy', meaning it only runs when needed.</p>
+                    </div>`,
+        },
+        forms_val: {
+          title: "07. Form Processing",
+          explain:
+            "Forms bridge the gap between user input and the database, providing built-in validation and CSRF security protection.",
+          code: `class EntryForm(forms.Form):\n    title = forms.CharField()\n    if form.is_valid():\n        data = form.cleaned_data`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">CLEANED_DATA</p>
+                        <p class="text-[10px] text-gray-400">A dictionary containing sanitized, validated data from a submitted form.</p>
+                    </div>`,
+        },
+        auth_system: {
+          title: "08. Authentication",
+          explain:
+            "Django's built-in authentication system handles user accounts, groups, and permissions securely using industry-standard hashing.",
+          code: `from django.contrib.auth import login, logout\n# Secure login execution\nlogin(request, user)`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">PBKDF2</p>
+                        <p class="text-[10px] text-gray-400">The algorithm Django uses by default to securely hash user passwords.</p>
+                    </div>`,
+        },
+        static_media: {
+          title: "09. Assets & Media",
+          explain:
+            "Static files (CSS/JS) and Media (user uploads) are managed separately to ensure high performance on production servers.",
+          code: `{% load static %}\n<img src="{% static 'img/sys.png' %}" />`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">STATIC_URL</p>
+                        <p class="text-[10px] text-gray-400">The URL setting used to reference static files in the browser.</p>
+                    </div>`,
+        },
+        permissions: {
+          title: "10. Permissions & Security",
+          explain:
+            "View decorators allow developers to enforce security policies, such as requiring login or specific user permissions.",
+          code: `@login_required\ndef admin_view(request):\n    return render(request, 'dashboard.html')`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">CSRF</p>
+                        <p class="text-[10px] text-gray-400">Cross-Site Request Forgery—a security token that protects your forms from hackers.</p>
+                    </div>`,
+        },
+        rest_apis: {
+          title: "11. REST Architecture",
+          explain:
+            "Django Rest Framework (DRF) allows you to build APIs that return JSON, enabling your backend to talk to mobile apps and modern JS frameworks.",
+          code: `class ItemSerializer(serializers.Serializer):\n    title = serializers.CharField(max_length=100)`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">SERIALIZATION</p>
+                        <p class="text-[10px] text-gray-400">The process of converting complex data (Models) into JSON format.</p>
+                    </div>`,
+        },
+        deployment: {
+          title: "12. Production Deployment",
+          explain:
+            "Taking an app live involves configuring environment variables, disabling debug mode, and using a production server like Gunicorn.",
+          code: `DEBUG = False\nALLOWED_HOSTS = ['portfolio.com']`,
+          dictionary: `
+                    <div class="dict-item">
+                        <p class="text-[10px] text-red-400 font-bold mb-1 px-2 py-1 bg-red-950/30 rounded border border-red-500/30 inline-block">WSGI</p>
+                        <p class="text-[10px] text-gray-400">The interface used by web servers to communicate with Python web applications.</p>
+                    </div>`,
+        },
+      };
+
+      const navContainer = document.getElementById("nav-container");
+      Object.keys(topics).forEach((id, index) => {
+        const item = document.createElement("div");
+        item.className = "nav-item" + (index === 0 ? " active" : "");
+        item.id = "nav-" + id;
+        item.innerHTML =
+          (index + 1).toString().padStart(2, "0") +
+          ". " +
+          topics[id].title.split(".")[1].trim();
+        item.onclick = () => loadTopic(id);
+        navContainer.appendChild(item);
+      });
+
+      function loadTopic(id) {
+        const topic = topics[id];
+        if (!topic) return;
+        if (window.innerWidth <= 768) toggleMenu();
+
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((el) => el.classList.remove("active"));
+        document.getElementById("nav-" + id).classList.add("active");
+        document.getElementById("module-title").innerText = id.toUpperCase();
+
+        const escapedCode = topic.code
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
+        document.getElementById("content-area").innerHTML = `
+                <div class="text-2xl font-black orbitron mb-4 text-white uppercase tracking-tighter decoration-red-600 underline underline-offset-[12px]">
+                    ${topic.title}
+                </div>
+                <div class="text-sm text-gray-500 mb-8 italic border-l-2 border-red-600 pl-6 leading-relaxed">
+                    // DATA_ANALYTICS: ${topic.explain}
+                </div>
+                <div class="code-block">
+                    <div class="text-[9px] text-red-500 mb-2 orbitron">DJANGO_CORE_SOURCE</div>
+                    <pre><code>${escapedCode}</code></pre>
+                </div>
+                <div class="dictionary-grid">
+                    <div class="col-span-full text-white underline orbitron mb-4 text-sm tracking-widest uppercase">SYSTEM ARCHITECT DICTIONARY</div>
+                    ${topic.dictionary}
+                </div>
+            `;
+      }
+      window.onload = () => loadTopic("env_setup");
+    </script>
+  </body>
+</html>
