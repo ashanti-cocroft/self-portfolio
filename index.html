@@ -264,20 +264,117 @@
         background-size: 100% 4px, 3px 100%;
         pointer-events: none;
       }
+      /* --- THE ULTIMATE GLITCH STYLES --- */
+      .glitch-name {
+        position: relative;
+        color: white;
+        text-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+        z-index: 1;
+      }
+
+      /* Create the CRT Scanline Effect over the text only */
+      .glitch-name::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.25) 50%
+          ),
+          linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 0.06),
+            rgba(0, 255, 0, 0.02),
+            rgba(0, 0, 255, 0.06)
+          );
+        background-size: 100% 3px, 3px 100%;
+        pointer-events: none;
+        z-index: 5;
+      }
+
+      /* The Glitch Layers */
+      .glitch-name::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.8;
+        z-index: -1;
+      }
+
+      /* Animation for the red/blue "ghosting" */
+      .glitch-name:hover::after {
+        animation: extreme-glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both
+          infinite;
+        color: var(--holo-blue);
+        text-shadow: 4px 0 var(--crit-red), -4px 0 var(--holo-orange);
+      }
+
+      @keyframes extreme-glitch {
+        0% {
+          transform: translate(0);
+        }
+        20% {
+          transform: translate(-3px, 3px);
+        }
+        40% {
+          transform: translate(-3px, -3px);
+        }
+        60% {
+          transform: translate(3px, 3px);
+        }
+        80% {
+          transform: translate(3px, -3px);
+        }
+        100% {
+          transform: translate(0);
+        }
+      }
+
+      /* Dead Space "Dying Power" Flicker */
+      .name-trigger:hover .glitch-name {
+        animation: dead-space-flicker 1.5s infinite;
+      }
+
+      @keyframes dead-space-flicker {
+        0%,
+        19%,
+        21%,
+        23%,
+        25%,
+        54%,
+        56%,
+        100% {
+          opacity: 1;
+          filter: brightness(1);
+        }
+        20%,
+        24%,
+        55% {
+          opacity: 0.3;
+          filter: brightness(2) blur(2px);
+        }
+      }
     </style>
   </head>
   <body>
     <div id="master-overlay">
       <div class="name-trigger" id="name-container">
         <h1
-          class="orbitron text-7xl md:text-9xl font-black text-white leading-tight select-none"
+          class="glitch-name orbitron text-7xl md:text-9xl font-black leading-tight select-none"
+          data-text="ASHANTI&#10;COCROFT"
         >
           ASHANTI<br />COCROFT
         </h1>
         <p
           class="orbitron text-cyan-500 mt-4 tracking-[0.8em] text-[10px] uppercase opacity-70"
         >
-          [ System Architect // Polish Center ]
+          [ Software Engineer Core ]
         </p>
 
         <div class="holo-panel orbitron">
